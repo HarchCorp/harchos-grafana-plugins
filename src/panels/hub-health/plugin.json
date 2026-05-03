@@ -1,0 +1,31 @@
+{
+  "$schema": "https://raw.githubusercontent.com/grafana/grafana/main/docs/sources/developers/plugins/plugin.schema.json",
+  "id": "harchos-hub-health-panel",
+  "type": "panel",
+  "name": "Hub Health",
+  "info": {
+    "description": "Monitor health status, latency, error rates, and availability of HarchOS Hub instances",
+    "author": {
+      "name": "HarchCorp",
+      "url": "https://harchcorp.io"
+    },
+    "keywords": ["harchos", "hub", "health", "latency", "availability", "sovereignty"],
+    "logos": {
+      "small": "img/logo.svg",
+      "large": "img/logo.svg"
+    },
+    "links": [
+      {
+        "name": "Documentation",
+        "url": "https://docs.harchcorp.io/harchos/grafana-plugins/hub-health",
+        "type": "docs"
+      }
+    ],
+    "version": "1.0.0",
+    "updated": "%DATE%"
+  },
+  "dependencies": {
+    "grafanaDependency": ">=10.0.0",
+    "plugins": []
+  }
+}

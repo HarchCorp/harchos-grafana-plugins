@@ -1,0 +1,78 @@
+{
+  "$schema": "https://raw.githubusercontent.com/grafana/grafana/main/docs/sources/developers/plugins/plugin.schema.json",
+  "id": "harchos-grafana-plugins",
+  "type": "app",
+  "name": "HarchOS Grafana Plugins",
+  "info": {
+    "description": "Grafana dashboard plugins for HarchOS observability – GPU Utilization, Carbon Metrics, Hub Health, Workload Distribution panels and HarchOS Observability data source",
+    "author": {
+      "name": "HarchCorp",
+      "url": "https://harchcorp.io"
+    },
+    "keywords": ["harchos", "observability", "gpu", "carbon", "energy", "hub", "workload", "sovereignty"],
+    "logos": {
+      "small": "img/logo.svg",
+      "large": "img/logo.svg"
+    },
+    "links": [
+      {
+        "name": "Documentation",
+        "url": "https://docs.harchcorp.io/harchos/grafana-plugins",
+        "type": "docs"
+      },
+      {
+        "name": "GitHub",
+        "url": "https://github.com/HarchCorp/harchos-grafana-plugins",
+        "type": "github"
+      },
+      {
+        "name": "Website",
+        "url": "https://harchcorp.io",
+        "type": "website"
+      }
+    ],
+    "version": "1.0.0",
+    "updated": "%DATE%"
+  },
+  "includes": [
+    {
+      "type": "datasource",
+      "name": "HarchOS Observability"
+    },
+    {
+      "type": "panel",
+      "name": "GPU Utilization"
+    },
+    {
+      "type": "panel",
+      "name": "Carbon Metrics"
+    },
+    {
+      "type": "panel",
+      "name": "Hub Health"
+    },
+    {
+      "type": "panel",
+      "name": "Workload Distribution"
+    },
+    {
+      "type": "dashboard",
+      "name": "Operations Overview",
+      "path": "dashboards/operations-overview.json"
+    },
+    {
+      "type": "dashboard",
+      "name": "Model Performance",
+      "path": "dashboards/model-performance.json"
+    },
+    {
+      "type": "dashboard",
+      "name": "Energy & Sustainability",
+      "path": "dashboards/energy-sustainability.json"
+    }
+  ],
+  "dependencies": {
+    "grafanaDependency": ">=10.0.0",
+    "plugins": []
+  }
+}

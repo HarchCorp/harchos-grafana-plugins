@@ -1,0 +1,31 @@
+{
+  "$schema": "https://raw.githubusercontent.com/grafana/grafana/main/docs/sources/developers/plugins/plugin.schema.json",
+  "id": "harchos-gpu-utilization-panel",
+  "type": "panel",
+  "name": "GPU Utilization",
+  "info": {
+    "description": "Visualize GPU compute utilization, temperature, VRAM, and power metrics from HarchOS observability",
+    "author": {
+      "name": "HarchCorp",
+      "url": "https://harchcorp.io"
+    },
+    "keywords": ["harchos", "gpu", "utilization", "temperature", "vram", "power"],
+    "logos": {
+      "small": "img/logo.svg",
+      "large": "img/logo.svg"
+    },
+    "links": [
+      {
+        "name": "Documentation",
+        "url": "https://docs.harchcorp.io/harchos/grafana-plugins/gpu-utilization",
+        "type": "docs"
+      }
+    ],
+    "version": "1.0.0",
+    "updated": "%DATE%"
+  },
+  "dependencies": {
+    "grafanaDependency": ">=10.0.0",
+    "plugins": []
+  }
+}

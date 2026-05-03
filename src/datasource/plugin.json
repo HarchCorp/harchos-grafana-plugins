@@ -1,0 +1,47 @@
+{
+  "$schema": "https://raw.githubusercontent.com/grafana/grafana/main/docs/sources/developers/plugins/plugin.schema.json",
+  "id": "harchos-datasource",
+  "type": "datasource",
+  "name": "HarchOS Observability",
+  "info": {
+    "description": "Data source for HarchOS Observability API – supports PromQL, LogQL, TraceQL, EnergyQL, and SovereigntyQL",
+    "author": {
+      "name": "HarchCorp",
+      "url": "https://harchcorp.io"
+    },
+    "keywords": ["harchos", "observability", "prometheus", "energy", "sovereignty", "carbon"],
+    "logos": {
+      "small": "img/logo.svg",
+      "large": "img/logo.svg"
+    },
+    "links": [
+      {
+        "name": "Documentation",
+        "url": "https://docs.harchcorp.io/harchos/grafana-plugins",
+        "type": "docs"
+      },
+      {
+        "name": "GitHub",
+        "url": "https://github.com/HarchCorp/harchos-grafana-plugins",
+        "type": "github"
+      }
+    ],
+    "version": "1.0.0",
+    "updated": "%DATE%"
+  },
+  "dependencies": {
+    "grafanaDependency": ">=10.0.0",
+    "plugins": []
+  },
+  "queryOptions": {
+    "maxDataPoints": true,
+    "minInterval": true,
+    "cacheTimeout": true
+  },
+  "alerting": true,
+  "backend": false,
+  "executable": "",
+  "metrics": true,
+  "logs": true,
+  "traces": true
+}
