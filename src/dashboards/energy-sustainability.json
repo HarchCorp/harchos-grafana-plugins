@@ -1,0 +1,268 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": { "type": "grafana", "uid": "-- Grafana --" },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "description": "HarchOS Energy & Sustainability – Carbon emissions, energy consumption, and environmental impact tracking",
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 1,
+  "id": null,
+  "links": [
+    {
+      "title": "Operations Overview",
+      "url": "/d/operations-overview",
+      "icon": "dashboard"
+    },
+    {
+      "title": "HarchOS Sustainability Policy",
+      "url": "https://docs.harchcorp.io/harchos/sustainability",
+      "icon": "doc",
+      "targetBlank": true
+    }
+  ],
+  "liveNow": true,
+  "panels": [
+    {
+      "datasource": { "type": "harchos-datasource", "uid": "${DS_HARCHOS}" },
+      "gridPos": { "h": 6, "w": 8, "x": 0, "y": 0 },
+      "id": 1,
+      "options": {
+        "displayMode": "singlestat",
+        "carbonUnit": "kg",
+        "showEnergy": true,
+        "showCost": true,
+        "energyPricePerKwh": 0.12,
+        "carbonIntensityFactor": 475,
+        "showTrend": true,
+        "sustainabilityTarget": 100000
+      },
+      "pluginVersion": "1.0.0",
+      "targets": [
+        {
+          "datasource": { "type": "harchos-datasource", "uid": "${DS_HARCHOS}" },
+          "expr": "sum(energy_consumption_watts{job=\"harchos-energy\"})",
+          "language": "energyql",
+          "legendFormat": "Total Carbon",
+          "refId": "A"
+        }
+      ],
+      "title": "Total Carbon Emissions",
+      "type": "harchos-carbon-metrics-panel"
+    },
+    {
+      "datasource": { "type": "harchos-datasource", "uid": "${DS_HARCHOS}" },
+      "gridPos": { "h": 6, "w": 8, "x": 8, "y": 0 },
+      "id": 2,
+      "options": {
+        "displayMode": "equivalents",
+        "carbonUnit": "kg",
+        "showEnergy": true,
+        "showCost": false,
+        "energyPricePerKwh": 0.12,
+        "carbonIntensityFactor": 475,
+        "showTrend": false,
+        "sustainabilityTarget": 0
+      },
+      "pluginVersion": "1.0.0",
+      "targets": [
+        {
+          "datasource": { "type": "harchos-datasource", "uid": "${DS_HARCHOS}" },
+          "expr": "sum(energy_consumption_watts{job=\"harchos-energy\"})",
+          "language": "energyql",
+          "legendFormat": "Total",
+          "refId": "A"
+        }
+      ],
+      "title": "Carbon Equivalents",
+      "type": "harchos-carbon-metrics-panel"
+    },
+    {
+      "datasource": { "type": "harchos-datasource", "uid": "${DS_HARCHOS}" },
+      "gridPos": { "h": 6, "w": 8, "x": 16, "y": 0 },
+      "id": 3,
+      "options": {
+        "displayMode": "breakdown",
+        "carbonUnit": "kg",
+        "showEnergy": true,
+        "showCost": true,
+        "energyPricePerKwh": 0.12,
+        "carbonIntensityFactor": 475,
+        "showTrend": true,
+        "sustainabilityTarget": 20000
+      },
+      "pluginVersion": "1.0.0",
+      "targets": [
+        {
+          "datasource": { "type": "harchos-datasource", "uid": "${DS_HARCHOS}" },
+          "expr": "energy_consumption_watts{job=\"harchos-energy\"}",
+          "language": "energyql",
+          "legendFormat": "{{zone}}",
+          "refId": "A"
+        }
+      ],
+      "title": "Carbon by Zone",
+      "type": "harchos-carbon-metrics-panel"
+    },
+    {
+      "datasource": { "type": "harchos-datasource", "uid": "${DS_HARCHOS}" },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 6 },
+      "id": 4,
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "palette-classic" },
+          "custom": { "lineWidth": 2, "fillOpacity": 15 },
+          "unit": "watt"
+        },
+        "overrides": []
+      },
+      "options": { "tooltip": { "mode": "multi" } },
+      "targets": [
+        {
+          "datasource": { "type": "harchos-datasource", "uid": "${DS_HARCHOS}" },
+          "expr": "energy_consumption_watts{job=\"harchos-energy\"}",
+          "language": "energyql",
+          "legendFormat": "{{zone}}",
+          "refId": "A"
+        }
+      ],
+      "title": "Energy Consumption Over Time",
+      "type": "timeseries"
+    },
+    {
+      "datasource": { "type": "harchos-datasource", "uid": "${DS_HARCHOS}" },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 6 },
+      "id": 5,
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "palette-classic" },
+          "custom": { "lineWidth": 2, "fillOpacity": 15 },
+          "unit": "gco2"
+        },
+        "overrides": []
+      },
+      "options": { "tooltip": { "mode": "multi" } },
+      "targets": [
+        {
+          "datasource": { "type": "harchos-datasource", "uid": "${DS_HARCHOS}" },
+          "expr": "carbon_emissions_grams{job=\"harchos-energy\"}",
+          "language": "energyql",
+          "legendFormat": "{{zone}}",
+          "refId": "A"
+        }
+      ],
+      "title": "Carbon Emissions Over Time",
+      "type": "timeseries"
+    },
+    {
+      "datasource": { "type": "harchos-datasource", "uid": "${DS_HARCHOS}" },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 14 },
+      "id": 6,
+      "options": {
+        "displayMode": "treemap",
+        "groupBy": "hub",
+        "showCpu": false,
+        "showMemory": false,
+        "showTaskCounts": false,
+        "showEnergyPerWorkload": true,
+        "maxWorkloads": 30,
+        "colorScheme": "cool"
+      },
+      "pluginVersion": "1.0.0",
+      "targets": [
+        {
+          "datasource": { "type": "harchos-datasource", "uid": "${DS_HARCHOS}" },
+          "expr": "harchos_workload_energy_kwh{job=\"harchos-workload\"}",
+          "language": "energyql",
+          "legendFormat": "{{workload_name}}",
+          "refId": "A"
+        }
+      ],
+      "title": "Energy by Workload (Treemap)",
+      "type": "harchos-workload-distribution-panel"
+    },
+    {
+      "datasource": { "type": "harchos-datasource", "uid": "${DS_HARCHOS}" },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 14 },
+      "id": 7,
+      "options": {
+        "displayMode": "statusgrid",
+        "showLatency": false,
+        "showRequestRates": false,
+        "showErrorRates": false,
+        "latencyWarningMs": 500,
+        "latencyCriticalMs": 2000,
+        "errorRateWarningPercent": 5,
+        "errorRateCriticalPercent": 15,
+        "showSovereigntyCompliance": true,
+        "sortBy": "name"
+      },
+      "pluginVersion": "1.0.0",
+      "targets": [
+        {
+          "datasource": { "type": "harchos-datasource", "uid": "${DS_HARCHOS}" },
+          "expr": "sovereignty_compliance{job=\"harchos-sovereignty\"}",
+          "language": "sovereigntyql",
+          "legendFormat": "{{hub}}",
+          "refId": "A"
+        }
+      ],
+      "title": "Sovereignty Compliance Status",
+      "type": "harchos-hub-health-panel"
+    },
+    {
+      "datasource": { "type": "harchos-datasource", "uid": "${DS_HARCHOS}" },
+      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 22 },
+      "id": 8,
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "palette-classic" },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "options": { "tooltip": { "mode": "multi" } },
+      "targets": [
+        {
+          "datasource": { "type": "harchos-datasource", "uid": "${DS_HARCHOS}" },
+          "expr": "energy_renewable_percent{job=\"harchos-energy\"}",
+          "language": "energyql",
+          "legendFormat": "{{source}}",
+          "refId": "A"
+        }
+      ],
+      "title": "Renewable Energy Mix",
+      "type": "timeseries"
+    }
+  ],
+  "refresh": "1m",
+  "schemaVersion": 39,
+  "tags": ["harchos", "energy", "sustainability", "carbon"],
+  "templating": {
+    "list": [
+      {
+        "current": {},
+        "hide": 0,
+        "name": "DS_HARCHOS",
+        "options": [],
+        "query": "harchos-datasource",
+        "type": "datasource"
+      }
+    ]
+  },
+  "time": { "from": "now-24h", "to": "now" },
+  "timepicker": {},
+  "timezone": "utc",
+  "title": "HarchOS Energy & Sustainability",
+  "uid": "energy-sustainability",
+  "version": 1
+}

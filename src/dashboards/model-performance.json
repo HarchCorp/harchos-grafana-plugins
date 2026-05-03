@@ -1,0 +1,267 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": { "type": "grafana", "uid": "-- Grafana --" },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "description": "HarchOS Model Performance – GPU metrics, inference latency, and workload performance monitoring",
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 1,
+  "id": null,
+  "links": [
+    {
+      "title": "Operations Overview",
+      "url": "/d/operations-overview",
+      "icon": "dashboard"
+    }
+  ],
+  "liveNow": true,
+  "panels": [
+    {
+      "datasource": { "type": "harchos-datasource", "uid": "${DS_HARCHOS}" },
+      "gridPos": { "h": 6, "w": 12, "x": 0, "y": 0 },
+      "id": 1,
+      "options": {
+        "displayMode": "gauges",
+        "showTemperature": true,
+        "showVram": true,
+        "temperatureWarning": 80,
+        "temperatureCritical": 95,
+        "groupByDevice": true,
+        "showAverage": true
+      },
+      "pluginVersion": "1.0.0",
+      "targets": [
+        {
+          "datasource": { "type": "harchos-datasource", "uid": "${DS_HARCHOS}" },
+          "expr": "harchos_gpu_utilization_percent{job=\"harchos-gpu\"}",
+          "language": "promql",
+          "legendFormat": "{{deviceName}}",
+          "refId": "A"
+        },
+        {
+          "datasource": { "type": "harchos-datasource", "uid": "${DS_HARCHOS}" },
+          "expr": "harchos_gpu_temperature_celsius{job=\"harchos-gpu\"}",
+          "language": "promql",
+          "legendFormat": "{{deviceName}}",
+          "refId": "B"
+        },
+        {
+          "datasource": { "type": "harchos-datasource", "uid": "${DS_HARCHOS}" },
+          "expr": "harchos_gpu_vram_used_bytes{job=\"harchos-gpu\"}",
+          "language": "promql",
+          "legendFormat": "{{deviceName}}",
+          "refId": "C"
+        },
+        {
+          "datasource": { "type": "harchos-datasource", "uid": "${DS_HARCHOS}" },
+          "expr": "harchos_gpu_power_draw_watts{job=\"harchos-gpu\"}",
+          "language": "promql",
+          "legendFormat": "{{deviceName}}",
+          "refId": "D"
+        }
+      ],
+      "title": "GPU Utilization & Temperature",
+      "type": "harchos-gpu-utilization-panel"
+    },
+    {
+      "datasource": { "type": "harchos-datasource", "uid": "${DS_HARCHOS}" },
+      "gridPos": { "h": 6, "w": 12, "x": 12, "y": 0 },
+      "id": 2,
+      "options": {
+        "displayMode": "stackedbar",
+        "groupBy": "name",
+        "showCpu": true,
+        "showMemory": true,
+        "showTaskCounts": true,
+        "showEnergyPerWorkload": true,
+        "maxWorkloads": 15,
+        "colorScheme": "harchos"
+      },
+      "pluginVersion": "1.0.0",
+      "targets": [
+        {
+          "datasource": { "type": "harchos-datasource", "uid": "${DS_HARCHOS}" },
+          "expr": "harchos_workload_cpu_usage_cores{job=\"harchos-workload\",type=\"inference\"}",
+          "language": "promql",
+          "legendFormat": "{{workload_name}}",
+          "refId": "A"
+        },
+        {
+          "datasource": { "type": "harchos-datasource", "uid": "${DS_HARCHOS}" },
+          "expr": "harchos_workload_memory_used_bytes{job=\"harchos-workload\",type=\"inference\"}",
+          "language": "promql",
+          "legendFormat": "{{workload_name}}",
+          "refId": "B"
+        }
+      ],
+      "title": "Inference Workloads",
+      "type": "harchos-workload-distribution-panel"
+    },
+    {
+      "datasource": { "type": "harchos-datasource", "uid": "${DS_HARCHOS}" },
+      "gridPos": { "h": 8, "w": 8, "x": 0, "y": 6 },
+      "id": 3,
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "palette-classic" },
+          "custom": { "lineWidth": 2, "fillOpacity": 10 },
+          "unit": "ms"
+        },
+        "overrides": []
+      },
+      "options": { "tooltip": { "mode": "multi" } },
+      "targets": [
+        {
+          "datasource": { "type": "harchos-datasource", "uid": "${DS_HARCHOS}" },
+          "expr": "histogram_quantile(0.50, rate(harchos_inference_duration_seconds_bucket{job=\"harchos-inference\"}[5m]))",
+          "language": "promql",
+          "legendFormat": "p50 {{model}}",
+          "refId": "A"
+        },
+        {
+          "datasource": { "type": "harchos-datasource", "uid": "${DS_HARCHOS}" },
+          "expr": "histogram_quantile(0.99, rate(harchos_inference_duration_seconds_bucket{job=\"harchos-inference\"}[5m]))",
+          "language": "promql",
+          "legendFormat": "p99 {{model}}",
+          "refId": "B"
+        }
+      ],
+      "title": "Inference Latency",
+      "type": "timeseries"
+    },
+    {
+      "datasource": { "type": "harchos-datasource", "uid": "${DS_HARCHOS}" },
+      "gridPos": { "h": 8, "w": 8, "x": 8, "y": 6 },
+      "id": 4,
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "palette-classic" },
+          "unit": "reqps"
+        },
+        "overrides": []
+      },
+      "options": { "tooltip": { "mode": "multi" } },
+      "targets": [
+        {
+          "datasource": { "type": "harchos-datasource", "uid": "${DS_HARCHOS}" },
+          "expr": "rate(harchos_inference_requests_total{job=\"harchos-inference\"}[5m])",
+          "language": "promql",
+          "legendFormat": "{{model}}",
+          "refId": "A"
+        }
+      ],
+      "title": "Inference Throughput",
+      "type": "timeseries"
+    },
+    {
+      "datasource": { "type": "harchos-datasource", "uid": "${DS_HARCHOS}" },
+      "gridPos": { "h": 8, "w": 8, "x": 16, "y": 6 },
+      "id": 5,
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "palette-classic" },
+          "unit": "percentunit"
+        },
+        "overrides": []
+      },
+      "options": { "tooltip": { "mode": "multi" } },
+      "targets": [
+        {
+          "datasource": { "type": "harchos-datasource", "uid": "${DS_HARCHOS}" },
+          "expr": "rate(harchos_inference_errors_total{job=\"harchos-inference\"}[5m]) / rate(harchos_inference_requests_total{job=\"harchos-inference\"}[5m])",
+          "language": "promql",
+          "legendFormat": "{{model}}",
+          "refId": "A"
+        }
+      ],
+      "title": "Inference Error Rate",
+      "type": "timeseries"
+    },
+    {
+      "datasource": { "type": "harchos-datasource", "uid": "${DS_HARCHOS}" },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 14 },
+      "id": 6,
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "palette-classic" },
+          "unit": "decbytes"
+        },
+        "overrides": []
+      },
+      "options": { "tooltip": { "mode": "multi" } },
+      "targets": [
+        {
+          "datasource": { "type": "harchos-datasource", "uid": "${DS_HARCHOS}" },
+          "expr": "harchos_gpu_vram_used_bytes{job=\"harchos-gpu\"}",
+          "language": "promql",
+          "legendFormat": "Used {{deviceName}}",
+          "refId": "A"
+        },
+        {
+          "datasource": { "type": "harchos-datasource", "uid": "${DS_HARCHOS}" },
+          "expr": "harchos_gpu_vram_total_bytes{job=\"harchos-gpu\"}",
+          "language": "promql",
+          "legendFormat": "Total {{deviceName}}",
+          "refId": "B"
+        }
+      ],
+      "title": "VRAM Usage Over Time",
+      "type": "timeseries"
+    },
+    {
+      "datasource": { "type": "harchos-datasource", "uid": "${DS_HARCHOS}" },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 14 },
+      "id": 7,
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "palette-classic" },
+          "unit": "watt"
+        },
+        "overrides": []
+      },
+      "options": { "tooltip": { "mode": "multi" } },
+      "targets": [
+        {
+          "datasource": { "type": "harchos-datasource", "uid": "${DS_HARCHOS}" },
+          "expr": "harchos_gpu_power_draw_watts{job=\"harchos-gpu\"}",
+          "language": "promql",
+          "legendFormat": "{{deviceName}}",
+          "refId": "A"
+        }
+      ],
+      "title": "GPU Power Draw",
+      "type": "timeseries"
+    }
+  ],
+  "refresh": "30s",
+  "schemaVersion": 39,
+  "tags": ["harchos", "model", "performance", "gpu"],
+  "templating": {
+    "list": [
+      {
+        "current": {},
+        "hide": 0,
+        "name": "DS_HARCHOS",
+        "options": [],
+        "query": "harchos-datasource",
+        "type": "datasource"
+      }
+    ]
+  },
+  "time": { "from": "now-1h", "to": "now" },
+  "timepicker": {},
+  "timezone": "utc",
+  "title": "HarchOS Model Performance",
+  "uid": "model-performance",
+  "version": 1
+}

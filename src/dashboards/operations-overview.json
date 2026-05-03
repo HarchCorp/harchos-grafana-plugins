@@ -1,0 +1,261 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": { "type": "grafana", "uid": "-- Grafana --" },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "description": "HarchOS Operations Overview – Real-time monitoring of hubs, workloads, and system health",
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 1,
+  "id": null,
+  "links": [
+    {
+      "title": "HarchOS Documentation",
+      "url": "https://docs.harchcorp.io/harchos",
+      "icon": "doc",
+      "targetBlank": true
+    },
+    {
+      "title": "Energy Dashboard",
+      "url": "/d/energy-sustainability",
+      "icon": "leaf"
+    }
+  ],
+  "liveNow": true,
+  "panels": [
+    {
+      "datasource": { "type": "harchos-datasource", "uid": "${DS_HARCHOS}" },
+      "gridPos": { "h": 4, "w": 6, "x": 0, "y": 0 },
+      "id": 1,
+      "options": {
+        "displayMode": "minicards",
+        "showLatency": true,
+        "showRequestRates": false,
+        "showErrorRates": true,
+        "latencyWarningMs": 500,
+        "latencyCriticalMs": 2000,
+        "errorRateWarningPercent": 5,
+        "errorRateCriticalPercent": 15,
+        "showSovereigntyCompliance": true,
+        "sortBy": "status"
+      },
+      "pluginVersion": "1.0.0",
+      "targets": [
+        {
+          "datasource": { "type": "harchos-datasource", "uid": "${DS_HARCHOS}" },
+          "expr": "harchos_hub_latency_ms{job=\"harchos-hub\"}",
+          "language": "promql",
+          "legendFormat": "{{hub_name}}",
+          "refId": "A"
+        },
+        {
+          "datasource": { "type": "harchos-datasource", "uid": "${DS_HARCHOS}" },
+          "expr": "harchos_hub_error_rate_percent{job=\"harchos-hub\"}",
+          "language": "promql",
+          "legendFormat": "{{hub_name}}",
+          "refId": "B"
+        }
+      ],
+      "title": "Hub Status",
+      "type": "harchos-hub-health-panel"
+    },
+    {
+      "datasource": { "type": "harchos-datasource", "uid": "${DS_HARCHOS}" },
+      "gridPos": { "h": 4, "w": 6, "x": 6, "y": 0 },
+      "id": 2,
+      "options": {
+        "displayMode": "gauges",
+        "showTemperature": true,
+        "showVram": true,
+        "temperatureWarning": 80,
+        "temperatureCritical": 95,
+        "groupByDevice": true,
+        "showAverage": true
+      },
+      "pluginVersion": "1.0.0",
+      "targets": [
+        {
+          "datasource": { "type": "harchos-datasource", "uid": "${DS_HARCHOS}" },
+          "expr": "harchos_gpu_utilization_percent{job=\"harchos-gpu\"}",
+          "language": "promql",
+          "legendFormat": "{{deviceName}}",
+          "refId": "A"
+        },
+        {
+          "datasource": { "type": "harchos-datasource", "uid": "${DS_HARCHOS}" },
+          "expr": "harchos_gpu_temperature_celsius{job=\"harchos-gpu\"}",
+          "language": "promql",
+          "legendFormat": "{{deviceName}}",
+          "refId": "B"
+        }
+      ],
+      "title": "GPU Utilization",
+      "type": "harchos-gpu-utilization-panel"
+    },
+    {
+      "datasource": { "type": "harchos-datasource", "uid": "${DS_HARCHOS}" },
+      "gridPos": { "h": 4, "w": 12, "x": 12, "y": 0 },
+      "id": 3,
+      "options": {
+        "displayMode": "breakdown",
+        "carbonUnit": "kg",
+        "showEnergy": true,
+        "showCost": true,
+        "energyPricePerKwh": 0.12,
+        "carbonIntensityFactor": 475,
+        "showTrend": true,
+        "sustainabilityTarget": 50000
+      },
+      "pluginVersion": "1.0.0",
+      "targets": [
+        {
+          "datasource": { "type": "harchos-datasource", "uid": "${DS_HARCHOS}" },
+          "expr": "energy_consumption_watts{job=\"harchos-energy\"}",
+          "language": "energyql",
+          "legendFormat": "{{zone}}",
+          "refId": "A"
+        }
+      ],
+      "title": "Carbon & Energy Overview",
+      "type": "harchos-carbon-metrics-panel"
+    },
+    {
+      "datasource": { "type": "harchos-datasource", "uid": "${DS_HARCHOS}" },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 4 },
+      "id": 4,
+      "options": {
+        "displayMode": "table",
+        "groupBy": "namespace",
+        "showCpu": true,
+        "showMemory": true,
+        "showTaskCounts": true,
+        "showEnergyPerWorkload": false,
+        "maxWorkloads": 20,
+        "colorScheme": "harchos"
+      },
+      "pluginVersion": "1.0.0",
+      "targets": [
+        {
+          "datasource": { "type": "harchos-datasource", "uid": "${DS_HARCHOS}" },
+          "expr": "harchos_workload_cpu_usage_cores{job=\"harchos-workload\"}",
+          "language": "promql",
+          "legendFormat": "{{workload_name}}",
+          "refId": "A"
+        },
+        {
+          "datasource": { "type": "harchos-datasource", "uid": "${DS_HARCHOS}" },
+          "expr": "harchos_workload_memory_used_bytes{job=\"harchos-workload\"}",
+          "language": "promql",
+          "legendFormat": "{{workload_name}}",
+          "refId": "B"
+        }
+      ],
+      "title": "Workload Distribution",
+      "type": "harchos-workload-distribution-panel"
+    },
+    {
+      "datasource": { "type": "harchos-datasource", "uid": "${DS_HARCHOS}" },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 4 },
+      "id": 5,
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "palette-classic" },
+          "custom": { "lineWidth": 1, "fillOpacity": 10 },
+          "unit": "reqps"
+        },
+        "overrides": []
+      },
+      "options": { "tooltip": { "mode": "multi" } },
+      "targets": [
+        {
+          "datasource": { "type": "harchos-datasource", "uid": "${DS_HARCHOS}" },
+          "expr": "rate(harchos_hub_requests_total{job=\"harchos-hub\"}[5m])",
+          "language": "promql",
+          "legendFormat": "{{hub_name}}",
+          "refId": "A"
+        }
+      ],
+      "title": "Request Rate (req/s)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": { "type": "harchos-datasource", "uid": "${DS_HARCHOS}" },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 12 },
+      "id": 6,
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "palette-classic" },
+          "unit": "ms"
+        },
+        "overrides": []
+      },
+      "options": { "tooltip": { "mode": "multi" } },
+      "targets": [
+        {
+          "datasource": { "type": "harchos-datasource", "uid": "${DS_HARCHOS}" },
+          "expr": "histogram_quantile(0.99, rate(harchos_hub_request_duration_seconds_bucket{job=\"harchos-hub\"}[5m]))",
+          "language": "promql",
+          "legendFormat": "p99 {{hub_name}}",
+          "refId": "A"
+        }
+      ],
+      "title": "Latency (p99)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": { "type": "harchos-datasource", "uid": "${DS_HARCHOS}" },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 12 },
+      "id": 7,
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "palette-classic" },
+          "unit": "percentunit"
+        },
+        "overrides": []
+      },
+      "options": { "tooltip": { "mode": "multi" } },
+      "targets": [
+        {
+          "datasource": { "type": "harchos-datasource", "uid": "${DS_HARCHOS}" },
+          "expr": "harchos_hub_error_rate_percent{job=\"harchos-hub\"} / 100",
+          "language": "promql",
+          "legendFormat": "{{hub_name}}",
+          "refId": "A"
+        }
+      ],
+      "title": "Error Rate",
+      "type": "timeseries"
+    }
+  ],
+  "refresh": "30s",
+  "schemaVersion": 39,
+  "tags": ["harchos", "operations", "overview"],
+  "templating": {
+    "list": [
+      {
+        "current": {},
+        "hide": 0,
+        "name": "DS_HARCHOS",
+        "options": [],
+        "query": "harchos-datasource",
+        "type": "datasource",
+        "queryValue": ""
+      }
+    ]
+  },
+  "time": { "from": "now-1h", "to": "now" },
+  "timepicker": {},
+  "timezone": "utc",
+  "title": "HarchOS Operations Overview",
+  "uid": "operations-overview",
+  "version": 1
+}
