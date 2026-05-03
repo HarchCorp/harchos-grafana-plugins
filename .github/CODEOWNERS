@@ -1,0 +1,25 @@
+# CODEOWNERS for HarchOS Grafana Plugins
+# See https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+
+# Default owners for everything
+*       @VitalCheffe @HarchCorp/core
+
+# Data source
+/src/datasource/   @VitalCheffe @HarchCorp/observability
+
+# Panel plugins
+/src/panels/gpu-utilization/    @VitalCheffe @HarchCorp/gpu-team
+/src/panels/carbon-metrics/     @VitalCheffe @HarchCorp/sustainability
+/src/panels/hub-health/         @VitalCheffe @HarchCorp/observability
+/src/panels/workload-distribution/ @VitalCheffe @HarchCorp/workload-team
+
+# Dashboard templates
+/src/dashboards/   @VitalCheffe @HarchCorp/dashboards
+
+# CI/CD
+/.github/          @VitalCheffe @HarchCorp/devops
+
+# Documentation
+/README.md         @VitalCheffe @HarchCorp/docs
+/CHANGELOG.md      @VitalCheffe @HarchCorp/docs
+/CONTRIBUTING.md   @VitalCheffe @HarchCorp/docs
