@@ -9,8 +9,8 @@
     "url": "https://github.com/HarchCorp/harchos-grafana-plugins.git"
   },
   "scripts": {
-    "build": "webpack -c webpack.config.js --env production",
-    "dev": "webpack -c webpack.config.js --env development",
+    "build": "node scripts/build.js --production",
+    "dev": "node scripts/build.js",
     "watch": "webpack -w -c webpack.config.js --env development",
     "test": "jest --passWithNoTests",
     "test:ci": "jest --passWithNoTests --ci --coverage",

@@ -14,6 +14,19 @@ module.exports = (env) => {
         { from: 'README.md', to: '.' },
         { from: 'LICENSE', to: '.' },
         { from: '**/*.json', to: '.', context: 'src/dashboards/', noErrorOnMissing: true },
+        // Sub-plugin plugin.json files
+        { from: 'src/panels/gpu-utilization/plugin.json', to: 'gpu-utilization/plugin.json' },
+        { from: 'src/panels/hub-health/plugin.json', to: 'hub-health/plugin.json' },
+        { from: 'src/panels/carbon-metrics/plugin.json', to: 'carbon-metrics/plugin.json' },
+        { from: 'src/panels/workload-distribution/plugin.json', to: 'workload-distribution/plugin.json' },
+        { from: 'src/datasource/plugin.json', to: 'datasource/plugin.json' },
+        // Images
+        { from: 'img/', to: 'img/', noErrorOnMissing: true },
+        { from: 'src/panels/gpu-utilization/img/', to: 'gpu-utilization/img/', noErrorOnMissing: true },
+        { from: 'src/panels/hub-health/img/', to: 'hub-health/img/', noErrorOnMissing: true },
+        { from: 'src/panels/carbon-metrics/img/', to: 'carbon-metrics/img/', noErrorOnMissing: true },
+        { from: 'src/panels/workload-distribution/img/', to: 'workload-distribution/img/', noErrorOnMissing: true },
+        { from: 'src/datasource/img/', to: 'datasource/img/', noErrorOnMissing: true },
       ],
     }),
     new ForkTsCheckerWebpackPlugin({
@@ -23,6 +36,9 @@ module.exports = (env) => {
           semantic: true,
           syntactic: true,
         },
+      },
+      issue: {
+        exclude: [{ file: '**/*.test.ts' }, { file: '**/*.test.tsx' }],
       },
     }),
   ];

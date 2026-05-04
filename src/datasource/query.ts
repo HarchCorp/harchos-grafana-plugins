@@ -91,7 +91,7 @@ type ApiResponse =
 /**
  * Build the request URL based on the query language.
  */
-function buildUrl(baseUrl: string, language: HarchOSQueryLanguage, instant: boolean): string {
+export function buildUrl(baseUrl: string, language: HarchOSQueryLanguage, instant: boolean): string {
   const base = baseUrl.replace(/\/+$/, '');
   switch (language) {
     case HarchOSQueryLanguage.PromQL:
@@ -112,7 +112,7 @@ function buildUrl(baseUrl: string, language: HarchOSQueryLanguage, instant: bool
 /**
  * Build query parameters for the API request.
  */
-function buildParams(query: HarchOSQuery, range: TimeRange): Record<string, string | number> {
+export function buildParams(query: HarchOSQuery, range: TimeRange): Record<string, string | number> {
   const params: Record<string, string | number> = {
     query: query.expr,
   };
