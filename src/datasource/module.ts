@@ -10,8 +10,11 @@ import { HarchOSQuery, HarchOSDataSourceOptions, HarchOSSecureJsonData } from '.
  *
  * Registers the data source, config editor, and query editor with Grafana.
  */
-export const plugin = new DataSourcePlugin<HarchOSDataSource, HarchOSQuery, HarchOSDataSourceOptions, HarchOSSecureJsonData>(
+export const plugin = new DataSourcePlugin<
   HarchOSDataSource,
-)
+  HarchOSQuery,
+  HarchOSDataSourceOptions,
+  HarchOSSecureJsonData
+>(HarchOSDataSource)
   .setConfigEditor(HarchOSConfigEditor)
   .setQueryEditor(HarchOSQueryEditor);

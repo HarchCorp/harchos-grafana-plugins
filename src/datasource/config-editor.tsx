@@ -220,7 +220,9 @@ export class HarchOSConfigEditor extends PureComponent<Props, State> {
                   value={secureJsonData?.basicAuthPassword || ''}
                   isConfigured={!!secureJsonFields?.basicAuthPassword}
                   onReset={() => this.onSecureJsonDataReset('basicAuthPassword')}
-                  onChange={(e: ChangeEvent<HTMLInputElement>) => this.onSecureJsonDataChange('basicAuthPassword', e.target.value)}
+                  onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                    this.onSecureJsonDataChange('basicAuthPassword', e.target.value)
+                  }
                 />
               </InlineField>
             </InlineFieldRow>

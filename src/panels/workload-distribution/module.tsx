@@ -10,8 +10,8 @@ import { WorkloadDistributionOptions, WorkloadDisplayMode, WorkloadGroupBy, Work
  * This panel visualizes workload allocation across HarchOS hubs with
  * CPU, memory, task counts, and energy metrics.
  */
-export const plugin = new PanelPlugin<WorkloadDistributionOptions>(WorkloadDistributionPanel)
-  .setPanelOptions((builder) => {
+export const plugin = new PanelPlugin<WorkloadDistributionOptions>(WorkloadDistributionPanel).setPanelOptions(
+  (builder) => {
     builder
       .addSelect({
         path: 'displayMode',
@@ -90,4 +90,5 @@ export const plugin = new PanelPlugin<WorkloadDistributionOptions>(WorkloadDistr
       });
 
     return builder;
-  });
+  },
+);

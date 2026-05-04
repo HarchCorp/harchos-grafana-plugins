@@ -77,12 +77,16 @@ interface SovereigntyqlResponse {
   };
 }
 
-type ApiResponse = PromqlRangeResponse | LogqlStreamResponse | TraceqlResponse | EnergyqlResponse | SovereigntyqlResponse;
+type ApiResponse =
+  | PromqlRangeResponse
+  | LogqlStreamResponse
+  | TraceqlResponse
+  | EnergyqlResponse
+  | SovereigntyqlResponse;
 
 // ────────────────────────────────────────────────────────────────────────────────
 // Query execution helpers
 // ────────────────────────────────────────────────────────────────────────────────
-
 
 /**
  * Build the request URL based on the query language.
@@ -149,7 +153,12 @@ function parseMatrixResult(result: PromqlMatrixValue, refId: string, name?: stri
     name: frameName,
     fields: [
       { name: 'time', type: FieldType.time, values: timeValues },
-      { name: 'value', type: FieldType.number, values: metricValues, labels: Object.fromEntries(Object.entries(labels).filter(([k]) => k !== '__name__')) },
+      {
+        name: 'value',
+        type: FieldType.number,
+        values: metricValues,
+        labels: Object.fromEntries(Object.entries(labels).filter(([k]) => k !== '__name__')),
+      },
     ],
   });
 
@@ -169,7 +178,12 @@ function parseVectorResult(result: PromqlVectorValue, refId: string, name?: stri
     name: frameName,
     fields: [
       { name: 'time', type: FieldType.time, values: [ts * 1000] },
-      { name: 'value', type: FieldType.number, values: [parseFloat(val)], labels: Object.fromEntries(Object.entries(labels).filter(([k]) => k !== '__name__')) },
+      {
+        name: 'value',
+        type: FieldType.number,
+        values: [parseFloat(val)],
+        labels: Object.fromEntries(Object.entries(labels).filter(([k]) => k !== '__name__')),
+      },
     ],
   });
 
@@ -341,9 +355,7 @@ export function executeQueries(
       catchError((err) => {
         const errorFrame = new MutableDataFrame({
           refId: query.refId,
-          fields: [
-            { name: 'error', type: FieldType.string, values: [err.message || 'Unknown error'] },
-          ],
+          fields: [{ name: 'error', type: FieldType.string, values: [err.message || 'Unknown error'] }],
         });
         return of({ data: [errorFrame], key: query.refId, state: 'Error' } as DataQueryResponse);
       }),

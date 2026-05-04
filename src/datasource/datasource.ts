@@ -1,9 +1,4 @@
-import {
-  DataSourceApi,
-  DataSourceInstanceSettings,
-  DataQueryRequest,
-  DataQueryResponse,
-} from '@grafana/data';
+import { DataSourceApi, DataSourceInstanceSettings, DataQueryRequest, DataQueryResponse } from '@grafana/data';
 import { getBackendSrv, getTemplateSrv, HealthCheckResult, HealthStatus } from '@grafana/runtime';
 import { Observable, lastValueFrom } from 'rxjs';
 
@@ -149,7 +144,10 @@ export class HarchOSDataSource extends DataSourceApi<HarchOSQuery, HarchOSDataSo
   /**
    * Return metadata about the data source – used by query editors for autocomplete.
    */
-  async metricFindQuery(query: string, options?: { range?: unknown }): Promise<Array<{ text: string; value?: string }>> {
+  async metricFindQuery(
+    query: string,
+    options?: { range?: unknown },
+  ): Promise<Array<{ text: string; value?: string }>> {
     const interpolated = this.interpolateVariables(query);
 
     try {

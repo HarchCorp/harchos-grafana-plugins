@@ -1,16 +1,6 @@
 import { PureComponent } from 'react';
-import {
-  PanelProps,
-  DataFrame,
-  FieldType,
-  getFieldDisplayName,
-} from '@grafana/data';
-import {
-  Gauge,
-  VerticalGroup,
-  Icon,
-  Tooltip,
-} from '@grafana/ui';
+import { PanelProps, DataFrame, FieldType, getFieldDisplayName } from '@grafana/data';
+import { Gauge, VerticalGroup, Icon, Tooltip } from '@grafana/ui';
 import { css } from '@emotion/css';
 
 import {
@@ -49,10 +39,16 @@ function extractHubData(frames: DataFrame[], options: HubHealthOptions): HubHeal
       let existing = dataPoints.find((dp) => dp.hubId === hubId);
       if (!existing) {
         existing = {
-          hubId, hubName, region,
+          hubId,
+          hubName,
+          region,
           status: HubStatus.Healthy,
-          uptimePercent: 100, latencyMs: 0, latencyP99Ms: 0,
-          requestsPerSecond: 0, errorRatePercent: 0, activeConnections: 0,
+          uptimePercent: 100,
+          latencyMs: 0,
+          latencyP99Ms: 0,
+          requestsPerSecond: 0,
+          errorRatePercent: 0,
+          activeConnections: 0,
           sovereigntyCompliant: true,
           lastHeartbeat: timeField?.values[i] ?? 0,
           version: labels.version,
@@ -62,27 +58,46 @@ function extractHubData(frames: DataFrame[], options: HubHealthOptions): HubHeal
 
       const lowerMetric = metricName.toLowerCase();
       if (lowerMetric.includes('latency') || lowerMetric.includes('duration')) {
-        if (lowerMetric.includes('p99')) { existing.latencyP99Ms = value; } else { existing.latencyMs = value; }
-      } else if (lowerMetric.includes('error_rate') || lowerMetric.includes('errorrate')) { existing.errorRatePercent = value; }
-      else if (lowerMetric.includes('request_rate') || lowerMetric.includes('rps')) { existing.requestsPerSecond = value; }
-      else if (lowerMetric.includes('uptime')) { existing.uptimePercent = value; }
-      else if (lowerMetric.includes('connection') || lowerMetric.includes('active')) { existing.activeConnections = value; }
-      else if (lowerMetric.includes('sovereignty') || lowerMetric.includes('compliance')) { existing.sovereigntyCompliant = value > 0; }
-      else if (lowerMetric.includes('heartbeat')) { existing.lastHeartbeat = value; }
+        if (lowerMetric.includes('p99')) {
+          existing.latencyP99Ms = value;
+        } else {
+          existing.latencyMs = value;
+        }
+      } else if (lowerMetric.includes('error_rate') || lowerMetric.includes('errorrate')) {
+        existing.errorRatePercent = value;
+      } else if (lowerMetric.includes('request_rate') || lowerMetric.includes('rps')) {
+        existing.requestsPerSecond = value;
+      } else if (lowerMetric.includes('uptime')) {
+        existing.uptimePercent = value;
+      } else if (lowerMetric.includes('connection') || lowerMetric.includes('active')) {
+        existing.activeConnections = value;
+      } else if (lowerMetric.includes('sovereignty') || lowerMetric.includes('compliance')) {
+        existing.sovereigntyCompliant = value > 0;
+      } else if (lowerMetric.includes('heartbeat')) {
+        existing.lastHeartbeat = value;
+      }
 
-      existing.status = determineHubStatus(existing.latencyMs, existing.errorRatePercent, existing.uptimePercent, options);
+      existing.status = determineHubStatus(
+        existing.latencyMs,
+        existing.errorRatePercent,
+        existing.uptimePercent,
+        options,
+      );
     }
   }
 
   return dataPoints.sort((a, b) => {
     switch (options.sortBy) {
-      case HubSortField.Latency: return b.latencyMs - a.latencyMs;
-      case HubSortField.ErrorRate: return b.errorRatePercent - a.errorRatePercent;
+      case HubSortField.Latency:
+        return b.latencyMs - a.latencyMs;
+      case HubSortField.ErrorRate:
+        return b.errorRatePercent - a.errorRatePercent;
       case HubSortField.Status: {
         const o = { [HubStatus.Offline]: 0, [HubStatus.Unhealthy]: 1, [HubStatus.Degraded]: 2, [HubStatus.Healthy]: 3 };
         return o[a.status] - o[b.status];
       }
-      default: return a.hubName.localeCompare(b.hubName);
+      default:
+        return a.hubName.localeCompare(b.hubName);
     }
   });
 }
@@ -104,18 +119,56 @@ function timeSinceHeartbeat(timestamp: number): string {
 const getStyles = () => ({
   container: css({ width: '100%', height: '100%', overflow: 'auto', padding: '12px' }),
   statusGrid: css({ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))', gap: '10px' }),
-  statusCell: css({ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '12px 8px', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.1)', background: 'rgba(255,255,255,0.03)', cursor: 'pointer' }),
+  statusCell: css({
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: '12px 8px',
+    borderRadius: '8px',
+    border: '1px solid rgba(255,255,255,0.1)',
+    background: 'rgba(255,255,255,0.03)',
+    cursor: 'pointer',
+  }),
   statusIndicator: css({ width: '12px', height: '12px', borderRadius: '50%', marginBottom: '6px' }),
-  hubNameLabel: css({ fontSize: '12px', fontWeight: 600, color: '#D6D6D6', textAlign: 'center', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: '100%' }),
+  hubNameLabel: css({
+    fontSize: '12px',
+    fontWeight: 600,
+    color: '#D6D6D6',
+    textAlign: 'center',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    whiteSpace: 'nowrap',
+    maxWidth: '100%',
+  }),
   regionLabel: css({ fontSize: '10px', color: '#8E8E8E', marginTop: '2px' }),
-  hubCard: css({ background: 'rgba(255,255,255,0.05)', borderRadius: '8px', padding: '16px', border: '1px solid rgba(255,255,255,0.1)' }),
+  hubCard: css({
+    background: 'rgba(255,255,255,0.05)',
+    borderRadius: '8px',
+    padding: '16px',
+    border: '1px solid rgba(255,255,255,0.1)',
+  }),
   hubGrid: css({ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: '12px' }),
   cardHeader: css({ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }),
   cardTitle: css({ fontSize: '14px', fontWeight: 600, color: '#D6D6D6' }),
-  metricRow: css({ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '3px 0', fontSize: '12px' }),
+  metricRow: css({
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: '3px 0',
+    fontSize: '12px',
+  }),
   metricLabel: css({ color: '#A0A0A0' }),
   metricValue: css({ fontWeight: 500 }),
-  miniCard: css({ display: 'flex', alignItems: 'center', gap: '8px', padding: '8px 12px', borderRadius: '6px', border: '1px solid rgba(255,255,255,0.1)', background: 'rgba(255,255,255,0.03)' }),
+  miniCard: css({
+    display: 'flex',
+    alignItems: 'center',
+    gap: '8px',
+    padding: '8px 12px',
+    borderRadius: '6px',
+    border: '1px solid rgba(255,255,255,0.1)',
+    background: 'rgba(255,255,255,0.03)',
+  }),
   miniGrid: css({ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '8px' }),
 });
 
@@ -132,7 +185,9 @@ export class HubHealthPanel extends PureComponent<Props> {
 
     if (dataPoints.length === 0) {
       return (
-        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%', color: '#8E8E8E' }}>
+        <div
+          style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%', color: '#8E8E8E' }}
+        >
           <VerticalGroup align="center">
             <Icon name="heart" size="xxxl" />
             <div>No hub health data available</div>
@@ -143,11 +198,16 @@ export class HubHealthPanel extends PureComponent<Props> {
     }
 
     switch (options.displayMode) {
-      case HubDisplayMode.StatusGrid: return this.renderStatusGrid(dataPoints);
-      case HubDisplayMode.Table: return this.renderCards(dataPoints);
-      case HubDisplayMode.Gauges: return this.renderGauges(dataPoints);
-      case HubDisplayMode.MiniCards: return this.renderMiniCards(dataPoints);
-      default: return this.renderStatusGrid(dataPoints);
+      case HubDisplayMode.StatusGrid:
+        return this.renderStatusGrid(dataPoints);
+      case HubDisplayMode.Table:
+        return this.renderCards(dataPoints);
+      case HubDisplayMode.Gauges:
+        return this.renderGauges(dataPoints);
+      case HubDisplayMode.MiniCards:
+        return this.renderMiniCards(dataPoints);
+      default:
+        return this.renderStatusGrid(dataPoints);
     }
   }
 
@@ -181,7 +241,10 @@ export class HubHealthPanel extends PureComponent<Props> {
             <div className={styles.hubCard} key={hub.hubId}>
               <div className={styles.cardHeader}>
                 <span className={styles.cardTitle}>{hub.hubName}</span>
-                <Icon name={getStatusIcon(hub.status) as any} style={{ color: getStatusColor(hub.status), fontSize: '18px' }} />
+                <Icon
+                  name={getStatusIcon(hub.status) as any}
+                  style={{ color: getStatusColor(hub.status), fontSize: '18px' }}
+                />
               </div>
               <div className={styles.metricRow}>
                 <span className={styles.metricLabel}>Status</span>
@@ -197,7 +260,10 @@ export class HubHealthPanel extends PureComponent<Props> {
                 <>
                   <div className={styles.metricRow}>
                     <span className={styles.metricLabel}>Latency (avg)</span>
-                    <span className={styles.metricValue} style={{ color: hub.latencyMs > options.latencyWarningMs ? '#FF9830' : '#73BF69' }}>
+                    <span
+                      className={styles.metricValue}
+                      style={{ color: hub.latencyMs > options.latencyWarningMs ? '#FF9830' : '#73BF69' }}
+                    >
                       {formatLatency(hub.latencyMs)}
                     </span>
                   </div>
@@ -216,7 +282,10 @@ export class HubHealthPanel extends PureComponent<Props> {
               {options.showErrorRates && (
                 <div className={styles.metricRow}>
                   <span className={styles.metricLabel}>Error Rate</span>
-                  <span className={styles.metricValue} style={{ color: hub.errorRatePercent > options.errorRateWarningPercent ? '#E02F44' : '#73BF69' }}>
+                  <span
+                    className={styles.metricValue}
+                    style={{ color: hub.errorRatePercent > options.errorRateWarningPercent ? '#E02F44' : '#73BF69' }}
+                  >
                     {hub.errorRatePercent.toFixed(2)}%
                   </span>
                 </div>
@@ -224,7 +293,10 @@ export class HubHealthPanel extends PureComponent<Props> {
               {options.showSovereigntyCompliance && (
                 <div className={styles.metricRow}>
                   <span className={styles.metricLabel}>Sovereignty</span>
-                  <span className={styles.metricValue} style={{ color: hub.sovereigntyCompliant ? '#73BF69' : '#E02F44' }}>
+                  <span
+                    className={styles.metricValue}
+                    style={{ color: hub.sovereigntyCompliant ? '#73BF69' : '#E02F44' }}
+                  >
                     {hub.sovereigntyCompliant ? 'Compliant' : 'Non-compliant'}
                   </span>
                 </div>
@@ -235,7 +307,9 @@ export class HubHealthPanel extends PureComponent<Props> {
               </div>
               <div className={styles.metricRow}>
                 <span className={styles.metricLabel}>Last Heartbeat</span>
-                <span className={styles.metricValue} style={{ fontSize: '11px' }}>{timeSinceHeartbeat(hub.lastHeartbeat)}</span>
+                <span className={styles.metricValue} style={{ fontSize: '11px' }}>
+                  {timeSinceHeartbeat(hub.lastHeartbeat)}
+                </span>
               </div>
             </div>
           ))}
@@ -251,7 +325,9 @@ export class HubHealthPanel extends PureComponent<Props> {
         <div className={styles.hubGrid}>
           {dataPoints.map((hub) => (
             <div key={hub.hubId} style={{ textAlign: 'center' }}>
-              <div style={{ fontSize: '13px', fontWeight: 600, color: '#D6D6D6', marginBottom: '4px' }}>{hub.hubName}</div>
+              <div style={{ fontSize: '13px', fontWeight: 600, color: '#D6D6D6', marginBottom: '4px' }}>
+                {hub.hubName}
+              </div>
               <Gauge
                 value={{ numeric: hub.uptimePercent, text: `${hub.uptimePercent.toFixed(2)}%` }}
                 field={{ thresholds: { mode: 0 as const, steps: uptimeThresholds }, unit: '%' } as any}
@@ -275,8 +351,18 @@ export class HubHealthPanel extends PureComponent<Props> {
         <div className={styles.miniGrid}>
           {dataPoints.map((hub) => (
             <div className={styles.miniCard} key={hub.hubId}>
-              <div style={{ width: '10px', height: '10px', borderRadius: '50%', background: getStatusColor(hub.status), flexShrink: 0 }} />
-              <span className={styles.hubNameLabel} style={{ flex: 1 }}>{hub.hubName}</span>
+              <div
+                style={{
+                  width: '10px',
+                  height: '10px',
+                  borderRadius: '50%',
+                  background: getStatusColor(hub.status),
+                  flexShrink: 0,
+                }}
+              />
+              <span className={styles.hubNameLabel} style={{ flex: 1 }}>
+                {hub.hubName}
+              </span>
               <span style={{ fontSize: '11px', color: '#8E8E8E' }}>{formatLatency(hub.latencyMs)}</span>
             </div>
           ))}

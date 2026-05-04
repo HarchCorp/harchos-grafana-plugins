@@ -1,10 +1,5 @@
 import { PureComponent } from 'react';
-import {
-  PanelProps,
-  DataFrame,
-  FieldType,
-  getFieldDisplayName,
-} from '@grafana/data';
+import { PanelProps, DataFrame, FieldType, getFieldDisplayName } from '@grafana/data';
 import {
   BigValue,
   BigValueColorMode,
@@ -190,7 +185,9 @@ export class GpuUtilizationPanel extends PureComponent<Props> {
 
     if (dataPoints.length === 0) {
       return (
-        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%', color: '#8E8E8E' }}>
+        <div
+          style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%', color: '#8E8E8E' }}
+        >
           <VerticalGroup align="center">
             <Icon name="monitor" size="xxxl" />
             <div>No GPU data available</div>
@@ -241,7 +238,16 @@ export class GpuUtilizationPanel extends PureComponent<Props> {
               {options.showTemperature && gpu.temperatureCelsius > 0 && (
                 <div className={styles.metricRow}>
                   <span className={styles.metricLabel}>Temperature</span>
-                  <span className={styles.metricValue} style={{ color: getTemperatureColor(gpu.temperatureCelsius, options.temperatureWarning, options.temperatureCritical) }}>
+                  <span
+                    className={styles.metricValue}
+                    style={{
+                      color: getTemperatureColor(
+                        gpu.temperatureCelsius,
+                        options.temperatureWarning,
+                        options.temperatureCritical,
+                      ),
+                    }}
+                  >
                     {gpu.temperatureCelsius.toFixed(0)}°C
                   </span>
                 </div>

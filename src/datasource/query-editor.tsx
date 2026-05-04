@@ -127,11 +127,7 @@ export class HarchOSQueryEditor extends PureComponent<Props> {
               width={20}
             />
           </InlineField>
-          <InlineField
-            label="Offset"
-            labelWidth={8}
-            tooltip="Time offset for comparison queries (e.g. '1h', '24h')"
-          >
+          <InlineField label="Offset" labelWidth={8} tooltip="Time offset for comparison queries (e.g. '1h', '24h')">
             <Input value={query.offset || ''} onChange={this.onOffsetChange} placeholder="1h" width={10} />
           </InlineField>
           <InlineField label="Instant" labelWidth={8} tooltip="Return only the latest value instead of a range">

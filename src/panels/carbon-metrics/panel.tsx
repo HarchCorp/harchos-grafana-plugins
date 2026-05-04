@@ -1,10 +1,5 @@
 import { PureComponent } from 'react';
-import {
-  PanelProps,
-  DataFrame,
-  FieldType,
-  getFieldDisplayName,
-} from '@grafana/data';
+import { PanelProps, DataFrame, FieldType, getFieldDisplayName } from '@grafana/data';
 import {
   BigValue,
   BigValueColorMode,
@@ -16,13 +11,7 @@ import {
 } from '@grafana/ui';
 import { css } from '@emotion/css';
 
-import {
-  CarbonMetricsOptions,
-  CarbonDisplayMode,
-  CarbonUnit,
-  CarbonDataPoint,
-  calculateEquivalents,
-} from './types';
+import { CarbonMetricsOptions, CarbonDisplayMode, CarbonUnit, CarbonDataPoint, calculateEquivalents } from './types';
 
 interface Props extends PanelProps<CarbonMetricsOptions> {}
 
@@ -127,16 +116,43 @@ const getStyles = () => ({
     marginBottom: '12px',
   }),
   zoneLabel: css({ fontSize: '14px', fontWeight: 600, color: '#D6D6D6' }),
-  sourceBadge: css({ fontSize: '11px', padding: '2px 8px', borderRadius: '12px', background: 'rgba(115, 191, 105, 0.15)', color: '#73BF69' }),
-  metricRow: css({ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '4px 0', fontSize: '13px' }),
+  sourceBadge: css({
+    fontSize: '11px',
+    padding: '2px 8px',
+    borderRadius: '12px',
+    background: 'rgba(115, 191, 105, 0.15)',
+    color: '#73BF69',
+  }),
+  metricRow: css({
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: '4px 0',
+    fontSize: '13px',
+  }),
   metricLabel: css({ color: '#A0A0A0' }),
   metricValue: css({ fontWeight: 500, color: '#D6D6D6' }),
   equivalentsGrid: css({ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: '12px' }),
-  equivalentCard: css({ display: 'flex', flexDirection: 'column', alignItems: 'center', background: 'rgba(255, 255, 255, 0.05)', borderRadius: '8px', padding: '16px', textAlign: 'center' }),
+  equivalentCard: css({
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    background: 'rgba(255, 255, 255, 0.05)',
+    borderRadius: '8px',
+    padding: '16px',
+    textAlign: 'center',
+  }),
   equivalentIcon: css({ fontSize: '28px', marginBottom: '8px' }),
   equivalentValue: css({ fontSize: '20px', fontWeight: 700, color: '#73BF69' }),
   equivalentLabel: css({ fontSize: '11px', color: '#8E8E8E', marginTop: '4px' }),
-  sustainabilityBar: css({ width: '100%', height: '6px', background: 'rgba(255, 255, 255, 0.1)', borderRadius: '3px', overflow: 'hidden', marginTop: '8px' }),
+  sustainabilityBar: css({
+    width: '100%',
+    height: '6px',
+    background: 'rgba(255, 255, 255, 0.1)',
+    borderRadius: '3px',
+    overflow: 'hidden',
+    marginTop: '8px',
+  }),
   sustainabilityFill: css({ height: '100%', borderRadius: '3px', transition: 'width 0.5s ease-in-out' }),
 });
 
@@ -147,7 +163,9 @@ export class CarbonMetricsPanel extends PureComponent<Props> {
 
     if (dataPoints.length === 0) {
       return (
-        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%', color: '#8E8E8E' }}>
+        <div
+          style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%', color: '#8E8E8E' }}
+        >
           <VerticalGroup align="center">
             <Icon name="cloud" size="xxxl" />
             <div>No carbon data available</div>
@@ -210,10 +228,18 @@ export class CarbonMetricsPanel extends PureComponent<Props> {
             <div style={{ width: '100%' }}>
               <div className={styles.metricRow}>
                 <span className={styles.metricLabel}>Sustainability Target</span>
-                <span className={styles.metricValue}>{formatCarbonValue(options.sustainabilityTarget, options.carbonUnit)}</span>
+                <span className={styles.metricValue}>
+                  {formatCarbonValue(options.sustainabilityTarget, options.carbonUnit)}
+                </span>
               </div>
               <div className={styles.sustainabilityBar}>
-                <div className={styles.sustainabilityFill} style={{ width: `${Math.min(100, (totalCarbon / options.sustainabilityTarget) * 100)}%`, background: color }} />
+                <div
+                  className={styles.sustainabilityFill}
+                  style={{
+                    width: `${Math.min(100, (totalCarbon / options.sustainabilityTarget) * 100)}%`,
+                    background: color,
+                  }}
+                />
               </div>
             </div>
           )}
@@ -249,17 +275,28 @@ export class CarbonMetricsPanel extends PureComponent<Props> {
                 </div>
 
                 <Gauge
-                  value={{ numeric: convertCarbonUnit(totalCarbon, options.carbonUnit), text: formatCarbonValue(totalCarbon, options.carbonUnit) }}
-                  field={{
-                    thresholds: {
-                      mode: 0 as const,
-                      steps: [
-                        { value: 0, color: '#73BF69' },
-                        { value: convertCarbonUnit(options.sustainabilityTarget * 0.7, options.carbonUnit), color: '#FFB347' },
-                        { value: convertCarbonUnit(options.sustainabilityTarget, options.carbonUnit), color: '#E02F44' },
-                      ],
-                    },
-                  } as any}
+                  value={{
+                    numeric: convertCarbonUnit(totalCarbon, options.carbonUnit),
+                    text: formatCarbonValue(totalCarbon, options.carbonUnit),
+                  }}
+                  field={
+                    {
+                      thresholds: {
+                        mode: 0 as const,
+                        steps: [
+                          { value: 0, color: '#73BF69' },
+                          {
+                            value: convertCarbonUnit(options.sustainabilityTarget * 0.7, options.carbonUnit),
+                            color: '#FFB347',
+                          },
+                          {
+                            value: convertCarbonUnit(options.sustainabilityTarget, options.carbonUnit),
+                            color: '#E02F44',
+                          },
+                        ],
+                      },
+                    } as any
+                  }
                   theme={{} as any}
                   showThresholdMarkers={true}
                   showThresholdLabels={false}
@@ -315,7 +352,9 @@ export class CarbonMetricsPanel extends PureComponent<Props> {
                 <Icon name={eq.icon as any} size="xxxl" />
               </div>
               <div className={styles.equivalentValue}>{eq.value < 1 ? eq.value.toFixed(3) : eq.value.toFixed(1)}</div>
-              <div className={styles.equivalentLabel}>{eq.unit} — {eq.label}</div>
+              <div className={styles.equivalentLabel}>
+                {eq.unit} — {eq.label}
+              </div>
             </div>
           ))}
         </div>
