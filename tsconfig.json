@@ -20,7 +20,9 @@
     "outDir": "./dist",
     "skipLibCheck": true,
     "paths": {
-      "@harchos/*": ["src/*"]
+      "@harchos/*": ["src/*"],
+      "rxjs": ["node_modules/@grafana/data/node_modules/rxjs"],
+      "rxjs/*": ["node_modules/@grafana/data/node_modules/rxjs/*"]
     }
   },
   "include": ["src/**/*.ts", "src/**/*.tsx"],

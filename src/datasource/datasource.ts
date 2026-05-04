@@ -3,16 +3,11 @@ import {
   DataSourceInstanceSettings,
   DataQueryRequest,
   DataQueryResponse,
-  HealthCheckResult,
-  HealthCheckStatus,
-  MutableDataFrame,
-  FieldType,
 } from '@grafana/data';
-import { getBackendSrv, getTemplateSrv } from '@grafana/runtime';
-import { Observable } from 'rxjs';
-import { lastValueFrom } from 'rxjs/internal/lastValueFrom';
+import { getBackendSrv, getTemplateSrv, HealthCheckResult, HealthStatus } from '@grafana/runtime';
+import { Observable, lastValueFrom } from 'rxjs';
 
-import { HarchOSQuery, HarchOSDataSourceOptions, HarchOSSecureJsonData, HarchOSQueryLanguage } from './types';
+import { HarchOSQuery, HarchOSDataSourceOptions } from './types';
 import { executeQueries } from './query';
 
 /**
@@ -35,7 +30,7 @@ export class HarchOSDataSource extends DataSourceApi<HarchOSQuery, HarchOSDataSo
   constructor(instanceSettings: DataSourceInstanceSettings<HarchOSDataSourceOptions>) {
     super(instanceSettings);
     this.instanceSettings = instanceSettings;
-    this.url = instanceSettings.url;
+    this.url = instanceSettings.url || '';
     this.jsonData = instanceSettings.jsonData;
 
     // Enable annotations support
@@ -91,8 +86,6 @@ export class HarchOSDataSource extends DataSourceApi<HarchOSQuery, HarchOSDataSo
    * Test the data source health by querying the /api/v1/labels endpoint.
    */
   async testDatasource(): Promise<HealthCheckResult> {
-    const timeout = this.jsonData.timeout || 30_000;
-
     try {
       const response = await lastValueFrom(
         getBackendSrv().fetch({
@@ -106,14 +99,16 @@ export class HarchOSDataSource extends DataSourceApi<HarchOSQuery, HarchOSDataSo
 
       if (response.status === 200) {
         return {
-          status: HealthCheckStatus.OK,
+          status: HealthStatus.OK,
           message: 'HarchOS Observability API connection successful',
+          details: { message: 'HarchOS Observability API connection successful' },
         };
       }
 
       return {
-        status: HealthCheckStatus.Error,
+        status: HealthStatus.Error,
         message: `Unexpected response status: ${response.status}`,
+        details: { message: `Unexpected response status: ${response.status}` },
       };
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Unknown connection error';
@@ -121,28 +116,32 @@ export class HarchOSDataSource extends DataSourceApi<HarchOSQuery, HarchOSDataSo
       // Provide user-friendly messages for common errors
       if (message.includes('Failed to fetch') || message.includes('NetworkError')) {
         return {
-          status: HealthCheckStatus.Error,
+          status: HealthStatus.Error,
           message: `Cannot reach HarchOS API at ${this.url}. Verify the URL and network connectivity.`,
+          details: { message: `Cannot reach HarchOS API at ${this.url}` },
         };
       }
 
       if (message.includes('401') || message.includes('Unauthorized')) {
         return {
-          status: HealthCheckStatus.Error,
+          status: HealthStatus.Error,
           message: 'Authentication failed. Check your API key in the data source configuration.',
+          details: { message: 'Authentication failed' },
         };
       }
 
       if (message.includes('403') || message.includes('Forbidden')) {
         return {
-          status: HealthCheckStatus.Error,
+          status: HealthStatus.Error,
           message: 'Access denied. Verify your API key has the required permissions.',
+          details: { message: 'Access denied' },
         };
       }
 
       return {
-        status: HealthCheckStatus.Error,
+        status: HealthStatus.Error,
         message: `Connection failed: ${message}`,
+        details: { message: `Connection failed: ${message}` },
       };
     }
   }
@@ -164,7 +163,7 @@ export class HarchOSDataSource extends DataSourceApi<HarchOSQuery, HarchOSDataSo
       );
 
       if (response.data?.status === 'success' && Array.isArray(response.data.data)) {
-        return response.data.data.map((v) => ({ text: v, value: v }));
+        return response.data.data.map((v: string) => ({ text: v, value: v }));
       }
 
       return [];
@@ -188,7 +187,7 @@ export class HarchOSDataSource extends DataSourceApi<HarchOSQuery, HarchOSDataSo
       );
 
       if (response.data?.status === 'success' && Array.isArray(response.data.data)) {
-        return response.data.data.map((label) => ({ text: label.name || label }));
+        return response.data.data.map((label: { name: string }) => ({ text: label.name || String(label) }));
       }
 
       return [];
@@ -216,7 +215,7 @@ export class HarchOSDataSource extends DataSourceApi<HarchOSQuery, HarchOSDataSo
       );
 
       if (response.data?.status === 'success' && Array.isArray(response.data.data)) {
-        return response.data.data.map((v) => ({ text: v }));
+        return response.data.data.map((v: string) => ({ text: v }));
       }
 
       return [];

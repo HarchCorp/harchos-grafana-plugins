@@ -1,6 +1,5 @@
 module.exports = {
   root: true,
-  extends: ['@grafana/eslint-config'],
   parser: '@typescript-eslint/parser',
   parserOptions: {
     ecmaVersion: 2020,
@@ -17,10 +16,19 @@ module.exports = {
     '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
     '@typescript-eslint/explicit-function-return-type': 'off',
     '@typescript-eslint/no-explicit-any': 'warn',
+    '@typescript-eslint/no-unused-expressions': ['error', { allowShortCircuit: true, allowTernary: true }],
+    'no-console': ['warn', { allow: ['error', 'log', 'warn', 'info'] }],
+    'curly': 'off',
+    'eqeqeq': ['error', 'always', { null: 'ignore' }],
   },
   settings: {
     react: {
       version: 'detect',
     },
+  },
+  env: {
+    browser: true,
+    node: true,
+    es2020: true,
   },
 };

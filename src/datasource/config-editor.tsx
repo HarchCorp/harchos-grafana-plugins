@@ -1,6 +1,6 @@
-import React, { ChangeEvent, PureComponent } from 'react';
+import { ChangeEvent, PureComponent } from 'react';
 import { DataSourcePluginOptionsEditorProps } from '@grafana/data';
-import { InlineField, InlineFieldRow, Input, Switch, SecretField, FieldSet } from '@grafana/ui';
+import { InlineField, InlineFieldRow, Input, Switch, SecretInput, FieldSet } from '@grafana/ui';
 
 import { HarchOSDataSourceOptions, HarchOSSecureJsonData, HarchOSQueryLanguage, QUERY_LANGUAGE_OPTIONS } from './types';
 
@@ -98,7 +98,7 @@ export class HarchOSConfigEditor extends PureComponent<Props, State> {
     const { onOptionsChange, options } = this.props;
     onOptionsChange({
       ...options,
-      basicAuth: event.target.checked ? { user: '', password: '' } : undefined,
+      basicAuth: event.target.checked,
     });
   };
 
@@ -106,7 +106,7 @@ export class HarchOSConfigEditor extends PureComponent<Props, State> {
     const { onOptionsChange, options } = this.props;
     onOptionsChange({
       ...options,
-      basicAuth: { ...options.basicAuth!, user: event.target.value },
+      basicAuthUser: event.target.value,
     });
   };
 
@@ -213,14 +213,14 @@ export class HarchOSConfigEditor extends PureComponent<Props, State> {
           {options.basicAuth && (
             <InlineFieldRow>
               <InlineField label="User" labelWidth={14}>
-                <Input value={options.basicAuth?.user || ''} onChange={this.onBasicAuthUserChange} width={24} />
+                <Input value={options.basicAuthUser || ''} onChange={this.onBasicAuthUserChange} width={24} />
               </InlineField>
               <InlineField label="Password" labelWidth={10}>
-                <SecretField
+                <SecretInput
                   value={secureJsonData?.basicAuthPassword || ''}
-                  isConfigured={secureJsonFields?.basicAuthPassword as boolean}
+                  isConfigured={!!secureJsonFields?.basicAuthPassword}
                   onReset={() => this.onSecureJsonDataReset('basicAuthPassword')}
-                  onChange={(val) => this.onSecureJsonDataChange('basicAuthPassword', val)}
+                  onChange={(e: ChangeEvent<HTMLInputElement>) => this.onSecureJsonDataChange('basicAuthPassword', e.target.value)}
                 />
               </InlineField>
             </InlineFieldRow>
@@ -228,11 +228,11 @@ export class HarchOSConfigEditor extends PureComponent<Props, State> {
 
           <InlineFieldRow>
             <InlineField label="API Key (Bearer)" labelWidth={14}>
-              <SecretField
+              <SecretInput
                 value={secureJsonData?.apiKey || ''}
-                isConfigured={secureJsonFields?.apiKey as boolean}
+                isConfigured={!!secureJsonFields?.apiKey}
                 onReset={() => this.onSecureJsonDataReset('apiKey')}
-                onChange={(val) => this.onSecureJsonDataChange('apiKey', val)}
+                onChange={(e: ChangeEvent<HTMLInputElement>) => this.onSecureJsonDataChange('apiKey', e.target.value)}
                 placeholder="Bearer token for HarchOS API"
               />
             </InlineField>

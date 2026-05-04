@@ -1,5 +1,3 @@
-import { PanelOptionsEditorBuilder } from '@grafana/data';
-
 /**
  * Options for the Carbon Metrics panel.
  */

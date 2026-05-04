@@ -1,29 +1,21 @@
-import React, { PureComponent } from 'react';
+import { PureComponent } from 'react';
 import {
   PanelProps,
   DataFrame,
   FieldType,
   getFieldDisplayName,
-  formattedValueToString,
-  getValueFormat,
 } from '@grafana/data';
 import {
-  VizTooltipContainer,
-  TooltipDisplayMode,
-  usePanelContext,
   BigValue,
   BigValueColorMode,
   BigValueGraphMode,
   BigValueTextMode,
   Gauge,
   BarGauge,
-  HorizontalGroup,
   VerticalGroup,
   Icon,
-  Tooltip,
-  useStyles2,
 } from '@grafana/ui';
-import { css, cx } from '@emotion/css';
+import { css } from '@emotion/css';
 
 import { GpuUtilizationOptions, GpuDisplayMode, GpuDataPoint } from './types';
 
@@ -51,7 +43,6 @@ function extractGpuData(frames: DataFrame[]): GpuDataPoint[] {
       const deviceIndex = parseInt(labels.deviceIndex || labels.gpu || '0', 10);
       const deviceName = labels.deviceName || labels.gpu_name || `GPU ${deviceIndex}`;
 
-      // Try to find an existing data point for this device at this time
       let existing = dataPoints.find(
         (dp) => dp.deviceIndex === deviceIndex && dp.timestamp === (timeField?.values[i] ?? 0),
       );
@@ -72,7 +63,6 @@ function extractGpuData(frames: DataFrame[]): GpuDataPoint[] {
         dataPoints.push(existing);
       }
 
-      // Route the value to the correct field based on metric name or labels
       const lowerMetric = metricName.toLowerCase();
       if (lowerMetric.includes('utilization') || lowerMetric.includes('compute')) {
         existing.utilizationPercent = value;
@@ -89,7 +79,6 @@ function extractGpuData(frames: DataFrame[]): GpuDataPoint[] {
       } else if (lowerMetric.includes('power_limit')) {
         existing.powerLimitWatts = value;
       } else {
-        // Default: treat as utilization
         existing.utilizationPercent = value;
       }
     }
@@ -98,9 +87,6 @@ function extractGpuData(frames: DataFrame[]): GpuDataPoint[] {
   return dataPoints.sort((a, b) => a.deviceIndex - b.deviceIndex);
 }
 
-/**
- * Get color based on utilization percentage.
- */
 function getUtilizationColor(percent: number): string {
   if (percent >= 90) return '#E02F44';
   if (percent >= 70) return '#FF9830';
@@ -108,26 +94,18 @@ function getUtilizationColor(percent: number): string {
   return '#73BF69';
 }
 
-/**
- * Get temperature status color.
- */
 function getTemperatureColor(temp: number, warning: number, critical: number): string {
   if (temp >= critical) return '#E02F44';
   if (temp >= warning) return '#FF9830';
   return '#73BF69';
 }
 
-/**
- * Format bytes to human-readable.
- */
 function formatBytes(bytes: number): string {
   if (bytes === 0) return '0 B';
   const units = ['B', 'KiB', 'MiB', 'GiB', 'TiB'];
   const i = Math.floor(Math.log(bytes) / Math.log(1024));
   return `${(bytes / Math.pow(1024, i)).toFixed(1)} ${units[i]}`;
 }
-
-// ── Styles ────────────────────────────────────────────────────────────────────────
 
 const getStyles = () => ({
   container: css({
@@ -175,18 +153,8 @@ const getStyles = () => ({
     padding: '3px 0',
     fontSize: '12px',
   }),
-  metricLabel: css({
-    color: '#A0A0A0',
-  }),
-  metricValue: css({
-    fontWeight: 500,
-  }),
-  averageContainer: css({
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    height: '100%',
-  }),
+  metricLabel: css({ color: '#A0A0A0' }),
+  metricValue: css({ fontWeight: 500 }),
   barContainer: css({
     display: 'flex',
     flexDirection: 'column',
@@ -206,30 +174,25 @@ const getStyles = () => ({
     textOverflow: 'ellipsis',
     whiteSpace: 'nowrap',
   }),
-  barValue: css({
-    width: '50px',
-    fontSize: '12px',
-    textAlign: 'right',
-    color: '#A0A0A0',
-  }),
 });
 
-/**
- * GPU Utilization Panel Component
- *
- * Displays GPU utilization, temperature, VRAM, and power metrics
- * from HarchOS observability data in various visualization modes.
- */
+const gaugeThresholds = [
+  { value: 0, color: '#73BF69' },
+  { value: 50, color: '#FFB347' },
+  { value: 70, color: '#FF9830' },
+  { value: 90, color: '#E02F44' },
+];
+
 export class GpuUtilizationPanel extends PureComponent<Props> {
   render() {
-    const { data, options, width, height } = this.props;
+    const { data, options } = this.props;
     const dataPoints = extractGpuData(data.series);
 
     if (dataPoints.length === 0) {
       return (
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%', color: '#8E8E8E' }}>
           <VerticalGroup align="center">
-            <Icon name="gpu" size="xxxl" />
+            <Icon name="monitor" size="xxxl" />
             <div>No GPU data available</div>
             <div style={{ fontSize: '12px' }}>Configure a HarchOS data source with GPU metrics</div>
           </VerticalGroup>
@@ -266,44 +229,36 @@ export class GpuUtilizationPanel extends PureComponent<Props> {
 
               {/* Utilization gauge */}
               <Gauge
-                value={gpu.utilizationPercent}
-                unit="%"
-                thresholds={[
-                  { value: 0, color: '#73BF69' },
-                  { value: 50, color: '#FFB347' },
-                  { value: 70, color: '#FF9830' },
-                  { value: 90, color: '#E02F44' },
-                ]}
+                value={{ numeric: gpu.utilizationPercent, text: `${gpu.utilizationPercent.toFixed(1)}%` }}
+                field={{ thresholds: { mode: 0 as const, steps: gaugeThresholds }, unit: '%' } as any}
+                theme={{} as any}
+                showThresholdMarkers={true}
+                showThresholdLabels={false}
                 height={80}
+                width={200}
               />
 
-              {/* Temperature row */}
               {options.showTemperature && gpu.temperatureCelsius > 0 && (
                 <div className={styles.metricRow}>
-                  <span className={styles.metricLabel}>🌡 Temperature</span>
-                  <span
-                    className={styles.metricValue}
-                    style={{ color: getTemperatureColor(gpu.temperatureCelsius, options.temperatureWarning, options.temperatureCritical) }}
-                  >
+                  <span className={styles.metricLabel}>Temperature</span>
+                  <span className={styles.metricValue} style={{ color: getTemperatureColor(gpu.temperatureCelsius, options.temperatureWarning, options.temperatureCritical) }}>
                     {gpu.temperatureCelsius.toFixed(0)}°C
                   </span>
                 </div>
               )}
 
-              {/* VRAM row */}
               {options.showVram && gpu.vramTotalBytes > 0 && (
                 <div className={styles.metricRow}>
-                  <span className={styles.metricLabel}>💾 VRAM</span>
+                  <span className={styles.metricLabel}>VRAM</span>
                   <span className={styles.metricValue}>
                     {formatBytes(gpu.vramUsedBytes)} / {formatBytes(gpu.vramTotalBytes)}
                   </span>
                 </div>
               )}
 
-              {/* Power row */}
               {gpu.powerDrawWatts > 0 && (
                 <div className={styles.metricRow}>
-                  <span className={styles.metricLabel}>⚡ Power</span>
+                  <span className={styles.metricLabel}>Power</span>
                   <span className={styles.metricValue}>
                     {gpu.powerDrawWatts.toFixed(0)}W
                     {gpu.powerLimitWatts > 0 ? ` / ${gpu.powerLimitWatts.toFixed(0)}W` : ''}
@@ -330,7 +285,7 @@ export class GpuUtilizationPanel extends PureComponent<Props> {
               key={gpu.deviceIndex}
               value={{
                 numeric: gpu.utilizationPercent,
-                suffix: '%',
+                text: `${gpu.utilizationPercent.toFixed(1)}%`,
                 title: gpu.deviceName,
                 color: getUtilizationColor(gpu.utilizationPercent),
               }}
@@ -355,16 +310,13 @@ export class GpuUtilizationPanel extends PureComponent<Props> {
           <div className={styles.barRow} key={gpu.deviceIndex}>
             <span className={styles.barLabel}>{gpu.deviceName}</span>
             <BarGauge
-              value={gpu.utilizationPercent}
-              displayValue={`${gpu.utilizationPercent.toFixed(1)}%`}
-              thresholds={[
-                { value: 0, color: '#73BF69' },
-                { value: 50, color: '#FFB347' },
-                { value: 70, color: '#FF9830' },
-                { value: 90, color: '#E02F44' },
-              ]}
+              value={{ numeric: gpu.utilizationPercent, text: `${gpu.utilizationPercent.toFixed(1)}%` }}
+              field={{ thresholds: { mode: 0 as const, steps: gaugeThresholds } } as any}
+              theme={{} as any}
               height={24}
               width={this.props.width - 140}
+              displayMode={'gradient' as any}
+              orientation={'horizontal' as any}
             />
           </div>
         ))}
@@ -380,7 +332,7 @@ export class GpuUtilizationPanel extends PureComponent<Props> {
         <BigValue
           value={{
             numeric: avgUtil,
-            suffix: '%',
+            text: `${avgUtil.toFixed(1)}%`,
             title: 'Average Utilization',
             color: getUtilizationColor(avgUtil),
           }}

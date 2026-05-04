@@ -1,4 +1,4 @@
-import { DataSourcePlugin } from '@grafana/runtime';
+import { DataSourcePlugin } from '@grafana/data';
 
 import { HarchOSDataSource } from './datasource';
 import { HarchOSConfigEditor } from './config-editor';

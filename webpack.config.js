@@ -11,8 +11,8 @@ module.exports = (env) => {
     new CopyPlugin({
       patterns: [
         { from: 'plugin.json', to: '.' },
-        { from: '../../README.md', to: '.' },
-        { from: '../../LICENSE', to: '.' },
+        { from: 'README.md', to: '.' },
+        { from: 'LICENSE', to: '.' },
         { from: '**/*.json', to: '.', context: 'src/dashboards/', noErrorOnMissing: true },
       ],
     }),
@@ -82,15 +82,15 @@ module.exports = (env) => {
         },
       ],
     },
-    externals: [
-      'react',
-      'react-dom',
-      '@grafana/data',
-      '@grafana/runtime',
-      '@grafana/ui',
-      '@grafana/schema',
-      'rxjs',
-    ],
+    externals: {
+      react: 'react',
+      'react-dom': 'react-dom',
+      '@grafana/data': 'grafanaData',
+      '@grafana/runtime': 'grafanaRuntime',
+      '@grafana/ui': 'grafanaUi',
+      '@grafana/schema': 'grafanaSchema',
+      'rxjs': 'rxjs',
+    },
     plugins,
     performance: {
       hints: isProduction ? 'warning' : false,

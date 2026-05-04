@@ -1,5 +1,5 @@
 import React, { ChangeEvent, PureComponent } from 'react';
-import { QueryEditorProps } from '@grafana/data';
+import { QueryEditorProps, SelectableValue } from '@grafana/data';
 import { InlineField, InlineFieldRow, Input, Select, Switch, TextArea } from '@grafana/ui';
 
 import { HarchOSDataSource } from './datasource';
@@ -151,12 +151,3 @@ export class HarchOSQueryEditor extends PureComponent<Props> {
     );
   }
 }
-
-/**
- * Type alias for SelectableValue from @grafana/data (imported via ui).
- */
-type SelectableValue<T> = {
-  value?: T;
-  label?: string;
-  description?: string;
-};

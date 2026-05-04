@@ -1,9 +1,9 @@
 import { DataQueryRequest, DataQueryResponse, MutableDataFrame, FieldType, TimeRange } from '@grafana/data';
 import { getBackendSrv } from '@grafana/runtime';
 import { Observable, from, of, merge } from 'rxjs';
-import { catchError, map, mergeMap } from 'rxjs/operators';
+import { catchError, map } from 'rxjs/operators';
 
-import { HarchOSQuery, HarchOSDataSourceOptions, HarchOSQueryLanguage, isHarchOSLanguage } from './types';
+import { HarchOSQuery, HarchOSDataSourceOptions, HarchOSQueryLanguage } from './types';
 
 // ────────────────────────────────────────────────────────────────────────────────
 // API response shape (Prometheus-compatible + HarchOS extensions)
@@ -83,7 +83,6 @@ type ApiResponse = PromqlRangeResponse | LogqlStreamResponse | TraceqlResponse |
 // Query execution helpers
 // ────────────────────────────────────────────────────────────────────────────────
 
-const DEFAULT_TIMEOUT = 30_000;
 
 /**
  * Build the request URL based on the query language.
@@ -117,7 +116,7 @@ function buildParams(query: HarchOSQuery, range: TimeRange): Record<string, stri
   if (query.language !== HarchOSQueryLanguage.TraceQL && query.language !== HarchOSQueryLanguage.SovereigntyQL) {
     params.start = Math.floor(range.from.valueOf() / 1000);
     params.end = Math.floor(range.to.valueOf() / 1000);
-    params.step = query.intervalMs ? query.intervalMs / 1000 : 15;
+    params.step = 15;
   }
 
   if (query.legendFormat) {
@@ -148,10 +147,9 @@ function parseMatrixResult(result: PromqlMatrixValue, refId: string, name?: stri
   const frame = new MutableDataFrame({
     refId,
     name: frameName,
-    labels: Object.fromEntries(Object.entries(labels).filter(([k]) => k !== '__name__')),
     fields: [
       { name: 'time', type: FieldType.time, values: timeValues },
-      { name: 'value', type: FieldType.number, values: metricValues },
+      { name: 'value', type: FieldType.number, values: metricValues, labels: Object.fromEntries(Object.entries(labels).filter(([k]) => k !== '__name__')) },
     ],
   });
 
@@ -169,10 +167,9 @@ function parseVectorResult(result: PromqlVectorValue, refId: string, name?: stri
   const frame = new MutableDataFrame({
     refId,
     name: frameName,
-    labels: Object.fromEntries(Object.entries(labels).filter(([k]) => k !== '__name__')),
     fields: [
       { name: 'time', type: FieldType.time, values: [ts * 1000] },
-      { name: 'value', type: FieldType.number, values: [parseFloat(val)] },
+      { name: 'value', type: FieldType.number, values: [parseFloat(val)], labels: Object.fromEntries(Object.entries(labels).filter(([k]) => k !== '__name__')) },
     ],
   });
 
@@ -198,10 +195,9 @@ function parseLogStreams(
     return new MutableDataFrame({
       refId,
       name: `${refId}-stream-${idx}`,
-      labels: stream.stream,
       fields: [
         { name: 'time', type: FieldType.time, values: timeValues },
-        { name: 'line', type: FieldType.string, values: lineValues },
+        { name: 'line', type: FieldType.string, values: lineValues, labels: stream.stream },
       ],
     });
   });
@@ -256,20 +252,20 @@ function parseTraceResults(
  */
 export function executeQueries(
   request: DataQueryRequest<HarchOSQuery>,
-  instanceSettings: { url: string; jsonData: HarchOSDataSourceOptions; withCredentials?: boolean },
+  instanceSettings: { url?: string; jsonData: HarchOSDataSourceOptions; withCredentials?: boolean },
   headers: Record<string, string>,
 ): Observable<DataQueryResponse> {
   const { range } = request;
   const queries = request.targets.filter((q) => q.expr && !q.hide);
+  const baseUrl = instanceSettings.url || '';
 
   if (queries.length === 0) {
     return of({ data: [] });
   }
 
   const observables = queries.map((query) => {
-    const url = buildUrl(instanceSettings.url, query.language, !!query.instant);
+    const url = buildUrl(baseUrl, query.language, !!query.instant);
     const params = buildParams(query, range);
-    const timeout = instanceSettings.jsonData.timeout || DEFAULT_TIMEOUT;
 
     return from(
       getBackendSrv().fetch<ApiResponse>({
@@ -285,7 +281,7 @@ export function executeQueries(
         const data = response.data;
         const frames: MutableDataFrame[] = [];
 
-        if (!data || (data as Record<string, unknown>).status !== 'success') {
+        if (!data || (data as unknown as Record<string, unknown>).status !== 'success') {
           return { data: frames, key: query.refId, state: 'Done' } as DataQueryResponse;
         }
 

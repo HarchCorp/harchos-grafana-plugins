@@ -1,7 +1,7 @@
 import { PanelPlugin } from '@grafana/data';
 
 import { GpuUtilizationPanel } from './panel';
-import { GpuUtilizationOptions, GpuDisplayMode, buildGpuUtilizationOptions } from './types';
+import { GpuUtilizationOptions, GpuDisplayMode } from './types';
 
 /**
  * GPU Utilization panel plugin module.
