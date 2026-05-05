@@ -19,6 +19,8 @@ module.exports = (env) => {
         { from: 'src/panels/hub-health/plugin.json', to: 'hub-health/plugin.json' },
         { from: 'src/panels/carbon-metrics/plugin.json', to: 'carbon-metrics/plugin.json' },
         { from: 'src/panels/workload-distribution/plugin.json', to: 'workload-distribution/plugin.json' },
+        { from: 'src/panels/carbon-forecast/plugin.json', to: 'carbon-forecast/plugin.json' },
+        { from: 'src/panels/pricing-comparison/plugin.json', to: 'pricing-comparison/plugin.json' },
         { from: 'src/datasource/plugin.json', to: 'datasource/plugin.json' },
         // Images
         { from: 'img/', to: 'img/', noErrorOnMissing: true },
@@ -26,6 +28,8 @@ module.exports = (env) => {
         { from: 'src/panels/hub-health/img/', to: 'hub-health/img/', noErrorOnMissing: true },
         { from: 'src/panels/carbon-metrics/img/', to: 'carbon-metrics/img/', noErrorOnMissing: true },
         { from: 'src/panels/workload-distribution/img/', to: 'workload-distribution/img/', noErrorOnMissing: true },
+        { from: 'src/panels/carbon-forecast/img/', to: 'carbon-forecast/img/', noErrorOnMissing: true },
+        { from: 'src/panels/pricing-comparison/img/', to: 'pricing-comparison/img/', noErrorOnMissing: true },
         { from: 'src/datasource/img/', to: 'datasource/img/', noErrorOnMissing: true },
       ],
     }),
@@ -54,6 +58,8 @@ module.exports = (env) => {
       'carbon-metrics': './src/panels/carbon-metrics/module.tsx',
       'hub-health': './src/panels/hub-health/module.tsx',
       'workload-distribution': './src/panels/workload-distribution/module.tsx',
+      'carbon-forecast': './src/panels/carbon-forecast/module.tsx',
+      'pricing-comparison': './src/panels/pricing-comparison/module.tsx',
     },
     output: {
       filename: '[name]/module.js',

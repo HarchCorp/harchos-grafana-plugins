@@ -4,12 +4,12 @@
   "type": "app",
   "name": "HarchOS Grafana Plugins",
   "info": {
-    "description": "Grafana dashboard plugins for HarchOS observability – GPU Utilization, Carbon Metrics, Hub Health, Workload Distribution panels and HarchOS Observability data source",
+    "description": "Grafana dashboard plugins for HarchOS observability – GPU Utilization, Carbon Metrics, Hub Health, Workload Distribution, Carbon Forecast, Pricing Comparison panels and HarchOS Observability data source",
     "author": {
       "name": "HarchCorp",
       "url": "https://harchcorp.io"
     },
-    "keywords": ["harchos", "observability", "gpu", "carbon", "energy", "hub", "workload", "sovereignty"],
+    "keywords": ["harchos", "observability", "gpu", "carbon", "energy", "hub", "workload", "sovereignty", "forecast", "pricing", "regions"],
     "logos": {
       "small": "img/logo.svg",
       "large": "img/logo.svg"
@@ -56,6 +56,14 @@
       "name": "Workload Distribution"
     },
     {
+      "type": "panel",
+      "name": "Carbon Forecast"
+    },
+    {
+      "type": "panel",
+      "name": "Pricing Comparison"
+    },
+    {
       "type": "dashboard",
       "name": "Operations Overview",
       "path": "dashboards/operations-overview.json"
@@ -69,6 +77,11 @@
       "type": "dashboard",
       "name": "Energy & Sustainability",
       "path": "dashboards/energy-sustainability.json"
+    },
+    {
+      "type": "dashboard",
+      "name": "Platform Overview",
+      "path": "dashboards/platform-overview.json"
     }
   ],
   "dependencies": {

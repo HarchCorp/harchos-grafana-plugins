@@ -1,0 +1,31 @@
+{
+  "$schema": "https://raw.githubusercontent.com/grafana/grafana/main/docs/sources/developers/plugins/plugin.schema.json",
+  "id": "harchos-pricing-comparison-panel",
+  "type": "panel",
+  "name": "Pricing Comparison",
+  "info": {
+    "description": "Compare GPU pricing across regions and tiers with sorting by price, region, or carbon intensity",
+    "author": {
+      "name": "HarchCorp",
+      "url": "https://harchcorp.io"
+    },
+    "keywords": ["harchos", "pricing", "gpu", "comparison", "cost", "region"],
+    "logos": {
+      "small": "img/logo.svg",
+      "large": "img/logo.svg"
+    },
+    "links": [
+      {
+        "name": "Documentation",
+        "url": "https://docs.harchcorp.io/harchos/grafana-plugins/pricing-comparison",
+        "type": "docs"
+      }
+    ],
+    "version": "1.0.0",
+    "updated": "%DATE%"
+  },
+  "dependencies": {
+    "grafanaDependency": ">=10.0.0",
+    "plugins": []
+  }
+}

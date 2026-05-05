@@ -1,0 +1,261 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": { "type": "grafana", "uid": "-- Grafana --" },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "description": "HarchOS Platform Overview – Total GPUs, utilization, carbon metrics, active workloads, pricing, and carbon forecast",
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 1,
+  "id": null,
+  "links": [
+    {
+      "title": "HarchOS Documentation",
+      "url": "https://docs.harchcorp.io/harchos",
+      "icon": "doc",
+      "targetBlank": true
+    },
+    {
+      "title": "Operations Dashboard",
+      "url": "/d/operations-overview",
+      "icon": "dashboard"
+    }
+  ],
+  "liveNow": true,
+  "panels": [
+    {
+      "datasource": { "type": "harchos-datasource", "uid": "${DS_HARCHOS}" },
+      "gridPos": { "h": 4, "w": 6, "x": 0, "y": 0 },
+      "id": 1,
+      "options": {
+        "displayMode": "minicards",
+        "showLatency": false,
+        "showRequestRates": false,
+        "showErrorRates": false,
+        "latencyWarningMs": 500,
+        "latencyCriticalMs": 2000,
+        "errorRateWarningPercent": 5,
+        "errorRateCriticalPercent": 15,
+        "showSovereigntyCompliance": true,
+        "sortBy": "status"
+      },
+      "pluginVersion": "1.0.0",
+      "targets": [
+        {
+          "datasource": { "type": "harchos-datasource", "uid": "${DS_HARCHOS}" },
+          "expr": "harchos_hub_status{job=\"harchos-hub\"}",
+          "language": "promql",
+          "legendFormat": "{{hub_name}}",
+          "refId": "A"
+        }
+      ],
+      "title": "Hub Status Overview",
+      "type": "harchos-hub-health-panel"
+    },
+    {
+      "datasource": { "type": "harchos-datasource", "uid": "${DS_HARCHOS}" },
+      "gridPos": { "h": 4, "w": 6, "x": 6, "y": 0 },
+      "id": 2,
+      "options": {
+        "displayMode": "stats",
+        "showTemperature": false,
+        "showVram": true,
+        "temperatureWarning": 80,
+        "temperatureCritical": 95,
+        "groupByDevice": true,
+        "showAverage": true
+      },
+      "pluginVersion": "1.0.0",
+      "targets": [
+        {
+          "datasource": { "type": "harchos-datasource", "uid": "${DS_HARCHOS}" },
+          "expr": "harchos_gpu_utilization_percent{job=\"harchos-gpu\"}",
+          "language": "promql",
+          "legendFormat": "{{deviceName}}",
+          "refId": "A"
+        }
+      ],
+      "title": "Total GPUs & Utilization",
+      "type": "harchos-gpu-utilization-panel"
+    },
+    {
+      "datasource": { "type": "harchos-datasource", "uid": "${DS_HARCHOS}" },
+      "gridPos": { "h": 4, "w": 12, "x": 12, "y": 0 },
+      "id": 3,
+      "options": {
+        "displayMode": "singlestat",
+        "carbonUnit": "kg",
+        "showEnergy": true,
+        "showCost": true,
+        "energyPricePerKwh": 0.12,
+        "carbonIntensityFactor": 475,
+        "showTrend": true,
+        "sustainabilityTarget": 50000
+      },
+      "pluginVersion": "1.0.0",
+      "targets": [
+        {
+          "datasource": { "type": "harchos-datasource", "uid": "${DS_HARCHOS}" },
+          "expr": "energy_consumption_watts{job=\"harchos-energy\"}",
+          "language": "energyql",
+          "legendFormat": "{{zone}}",
+          "refId": "A"
+        }
+      ],
+      "title": "Carbon Metrics Summary",
+      "type": "harchos-carbon-metrics-panel"
+    },
+    {
+      "datasource": { "type": "harchos-datasource", "uid": "${DS_HARCHOS}" },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 4 },
+      "id": 4,
+      "options": {
+        "displayMode": "timeline",
+        "greenThreshold": 100,
+        "yellowThreshold": 200,
+        "forecastHours": 24,
+        "showGreenWindows": true,
+        "showCurrentMarker": true,
+        "showZoneLabels": true
+      },
+      "pluginVersion": "1.0.0",
+      "targets": [
+        {
+          "datasource": { "type": "harchos-datasource", "uid": "${DS_HARCHOS}" },
+          "expr": "carbon_intensity_forecast_gco2_kwh{job=\"harchos-carbon\"}",
+          "language": "energyql",
+          "legendFormat": "{{zone}}",
+          "refId": "A"
+        }
+      ],
+      "title": "Carbon Intensity Forecast (24h)",
+      "type": "harchos-carbon-forecast-panel"
+    },
+    {
+      "datasource": { "type": "harchos-datasource", "uid": "${DS_HARCHOS}" },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 4 },
+      "id": 5,
+      "options": {
+        "displayMode": "table",
+        "sortBy": "price",
+        "sortDirection": "asc",
+        "showGpuPricing": true,
+        "showCarbonIntensity": true,
+        "showRenewablePercentage": true,
+        "currencySymbol": "$",
+        "highlightLowest": true
+      },
+      "pluginVersion": "1.0.0",
+      "targets": [
+        {
+          "datasource": { "type": "harchos-datasource", "uid": "${DS_HARCHOS}" },
+          "expr": "harchos_gpu_hourly_price{job=\"harchos-pricing\"}",
+          "language": "energyql",
+          "legendFormat": "{{region_name}}",
+          "refId": "A"
+        },
+        {
+          "datasource": { "type": "harchos-datasource", "uid": "${DS_HARCHOS}" },
+          "expr": "carbon_intensity_gco2_kwh{job=\"harchos-carbon\"}",
+          "language": "energyql",
+          "legendFormat": "{{region_name}}",
+          "refId": "B"
+        }
+      ],
+      "title": "GPU Pricing Comparison",
+      "type": "harchos-pricing-comparison-panel"
+    },
+    {
+      "datasource": { "type": "harchos-datasource", "uid": "${DS_HARCHOS}" },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 12 },
+      "id": 6,
+      "options": {
+        "displayMode": "table",
+        "groupBy": "hub",
+        "showCpu": true,
+        "showMemory": true,
+        "showTaskCounts": true,
+        "showEnergyPerWorkload": true,
+        "maxWorkloads": 20,
+        "colorScheme": "harchos"
+      },
+      "pluginVersion": "1.0.0",
+      "targets": [
+        {
+          "datasource": { "type": "harchos-datasource", "uid": "${DS_HARCHOS}" },
+          "expr": "harchos_workload_cpu_usage_cores{job=\"harchos-workload\"}",
+          "language": "promql",
+          "legendFormat": "{{workload_name}}",
+          "refId": "A"
+        },
+        {
+          "datasource": { "type": "harchos-datasource", "uid": "${DS_HARCHOS}" },
+          "expr": "harchos_workload_energy_kwh{job=\"harchos-workload\"}",
+          "language": "energyql",
+          "legendFormat": "{{workload_name}}",
+          "refId": "B"
+        }
+      ],
+      "title": "Active Workloads",
+      "type": "harchos-workload-distribution-panel"
+    },
+    {
+      "datasource": { "type": "harchos-datasource", "uid": "${DS_HARCHOS}" },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 12 },
+      "id": 7,
+      "options": {
+        "displayMode": "breakdown",
+        "carbonUnit": "g",
+        "showEnergy": true,
+        "showCost": false,
+        "energyPricePerKwh": 0.12,
+        "carbonIntensityFactor": 475,
+        "showTrend": true,
+        "sustainabilityTarget": 0
+      },
+      "pluginVersion": "1.0.0",
+      "targets": [
+        {
+          "datasource": { "type": "harchos-datasource", "uid": "${DS_HARCHOS}" },
+          "expr": "carbon_savings_grams{job=\"harchos-carbon\"}",
+          "language": "energyql",
+          "legendFormat": "{{zone}}",
+          "refId": "A"
+        }
+      ],
+      "title": "Carbon Savings by Region",
+      "type": "harchos-carbon-metrics-panel"
+    }
+  ],
+  "refresh": "30s",
+  "schemaVersion": 39,
+  "tags": ["harchos", "platform", "overview", "carbon", "pricing", "forecast"],
+  "templating": {
+    "list": [
+      {
+        "current": {},
+        "hide": 0,
+        "name": "DS_HARCHOS",
+        "options": [],
+        "query": "harchos-datasource",
+        "type": "datasource",
+        "queryValue": ""
+      }
+    ]
+  },
+  "time": { "from": "now-1h", "to": "now" },
+  "timepicker": {},
+  "timezone": "utc",
+  "title": "HarchOS Platform Overview",
+  "uid": "platform-overview",
+  "version": 1
+}

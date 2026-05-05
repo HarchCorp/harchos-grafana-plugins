@@ -13,6 +13,8 @@ This repository provides a suite of Grafana plugins designed for HarchOS observa
 | **Carbon Metrics** | Panel | Track energy consumption, carbon emissions, cost estimation, and sustainability targets |
 | **Hub Health** | Panel | Monitor health status, latency, error rates, and availability of HarchOS Hub instances |
 | **Workload Distribution** | Panel | Visualize workload allocation across hubs with CPU, memory, tasks, and energy breakdown |
+| **Carbon Forecast** | Panel | Shows carbon intensity forecast for next 24 hours with green window highlights and color-coded intensity levels |
+| **Pricing Comparison** | Panel | Compare GPU pricing across regions and tiers, sortable by price, region, or carbon intensity |
 
 ## Query Languages
 
@@ -51,7 +53,7 @@ Add to your `grafana.ini`:
 
 ```ini
 [plugins]
-allow_loading_unsigned_plugins = harchos-datasource,harchos-gpu-utilization-panel,harchos-carbon-metrics-panel,harchos-hub-health-panel,harchos-workload-distribution-panel
+allow_loading_unsigned_plugins = harchos-datasource,harchos-gpu-utilization-panel,harchos-carbon-metrics-panel,harchos-hub-health-panel,harchos-workload-distribution-panel,harchos-carbon-forecast-panel,harchos-pricing-comparison-panel
 ```
 
 Restart Grafana after installation.
@@ -75,17 +77,18 @@ Restart Grafana after installation.
 
 ### 2. Import a Dashboard
 
-Three pre-built dashboard templates are included:
+Four pre-built dashboard templates are included:
 
 - **Operations Overview** — Real-time monitoring of hubs, workloads, and system health
 - **Model Performance** — GPU metrics, inference latency, and workload performance
 - **Energy & Sustainability** — Carbon emissions, energy consumption, and environmental impact
+- **Platform Overview** — Total GPUs, utilization, carbon metrics, active workloads, pricing, and carbon forecast
 
 Import via **Dashboards → Import → Upload JSON file** and select from `src/dashboards/`.
 
 ### 3. Add Panels
 
-All four panel plugins are available in the panel picker when editing a dashboard. Configure your HarchOS data source as the query target and start visualizing.
+All six panel plugins are available in the panel picker when editing a dashboard. Configure your HarchOS data source as the query target and start visualizing.
 
 ## Development
 
@@ -127,7 +130,7 @@ npm run test
 docker run -d \
   -p 3000:3000 \
   -v $(pwd)/dist:/var/lib/grafana/plugins/harchos-grafana-plugins \
-  -e "GF_PLUGINS_ALLOW_LOADING_UNSIGNED_PLUGINS=harchos-datasource,harchos-gpu-utilization-panel,harchos-carbon-metrics-panel,harchos-hub-health-panel,harchos-workload-distribution-panel" \
+  -e "GF_PLUGINS_ALLOW_LOADING_UNSIGNED_PLUGINS=harchos-datasource,harchos-gpu-utilization-panel,harchos-carbon-metrics-panel,harchos-hub-health-panel,harchos-workload-distribution-panel,harchos-carbon-forecast-panel,harchos-pricing-comparison-panel" \
   grafana/grafana:latest
 ```
 
@@ -197,6 +200,43 @@ Visualizes workload allocation across HarchOS hubs with resource metrics.
 - Color scheme: Default, Warm, Cool, HarchOS
 - Maximum workloads to display
 
+### Carbon Forecast Panel
+
+Shows carbon intensity forecast for the next 24 hours with green window highlights.
+
+**Display modes:**
+- **Timeline Chart** — SVG-based intensity line chart with green/yellow/red zone backgrounds and threshold markers
+- **Bar Chart** — Color-coded bar chart, one bar per time slot
+- **Summary Cards** — Per-zone cards with current intensity, averages, and next green window
+
+**Color coding:**
+- Green — intensity < 100 gCO₂/kWh (configurable)
+- Yellow — intensity 100–200 gCO₂/kWh (configurable)
+- Red — intensity > 200 gCO₂/kWh (configurable)
+
+**Configuration options:**
+- Green and yellow threshold values
+- Forecast hours (1–72h)
+- Show/hide green window highlights
+- Show current intensity marker
+- Show zone labels
+
+### Pricing Comparison Panel
+
+Compares GPU pricing across regions and tiers with carbon intensity context.
+
+**Display modes:**
+- **Table** — Sortable table with region, GPU model, tier, price, carbon, renewable, and GPU count columns
+- **Bar Comparison** — Horizontal bar gauges for quick price comparison
+- **Cards** — Card layout per region with pricing, carbon, and sovereignty details
+
+**Configuration options:**
+- Sort by region, price, carbon intensity, or tier
+- Sort ascending or descending
+- Show/hide GPU pricing, carbon intensity, renewable percentage
+- Currency symbol for price display
+- Highlight lowest price
+
 ## Architecture
 
 ```
@@ -213,7 +253,9 @@ harchos-grafana-plugins/
 │   │   ├── gpu-utilization/ # GPU Utilization panel
 │   │   ├── carbon-metrics/  # Carbon Metrics panel
 │   │   ├── hub-health/      # Hub Health panel
-│   │   └── workload-distribution/ # Workload Distribution panel
+│   │   ├── workload-distribution/ # Workload Distribution panel
+│   │   ├── carbon-forecast/ # Carbon Forecast panel
+│   │   └── pricing-comparison/ # Pricing Comparison panel
 │   └── dashboards/          # Pre-built dashboard templates
 ├── .github/workflows/       # CI/CD
 └── [config files]
