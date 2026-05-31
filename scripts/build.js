@@ -46,7 +46,7 @@ function replaceDateInFile(filePath) {
 replaceDateInFile(path.join(distDir, 'plugin.json'));
 
 // Replace in sub-plugin plugin.json files
-const subDirs = ['datasource', 'gpu-utilization', 'hub-health', 'carbon-metrics', 'workload-distribution'];
+const subDirs = ['datasource', 'gpu-utilization', 'hub-health', 'carbon-metrics', 'carbon-forecast', 'pricing-comparison', 'workload-distribution'];
 for (const dir of subDirs) {
   replaceDateInFile(path.join(distDir, dir, 'plugin.json'));
 }

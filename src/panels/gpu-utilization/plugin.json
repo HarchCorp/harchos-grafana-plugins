@@ -1,6 +1,6 @@
 {
   "$schema": "https://raw.githubusercontent.com/grafana/grafana/main/docs/sources/developers/plugins/plugin.schema.json",
-  "id": "harchos-gpu-utilization-panel",
+  "id": "harchcorp-gpu-utilization-panel",
   "type": "panel",
   "name": "GPU Utilization",
   "info": {
@@ -22,10 +22,10 @@
       }
     ],
     "version": "1.0.0",
-    "updated": "%DATE%"
+    "updated": "2026-03-04T00:00:00Z"
   },
   "dependencies": {
-    "grafanaDependency": ">=10.0.0",
+    "grafanaDependency": ">=11.0.0",
     "plugins": []
   }
 }

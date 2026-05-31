@@ -181,7 +181,7 @@ export class CarbonMetricsPanel extends PureComponent<Props> {
       case CarbonDisplayMode.Breakdown:
         return this.renderBreakdown(dataPoints);
       case CarbonDisplayMode.Timeline:
-        return this.renderBreakdown(dataPoints);
+        return this.renderTimeline(dataPoints);
       case CarbonDisplayMode.Equivalents:
         return this.renderEquivalents(dataPoints);
       default:
@@ -357,6 +357,78 @@ export class CarbonMetricsPanel extends PureComponent<Props> {
               </div>
             </div>
           ))}
+        </div>
+      </div>
+    );
+  }
+
+  private renderTimeline(dataPoints: CarbonDataPoint[]) {
+    const { options } = this.props;
+    const styles = getStyles();
+
+    // Group data points by zone for timeline view
+    const byZone = new Map<string, CarbonDataPoint[]>();
+    for (const dp of dataPoints) {
+      const list = byZone.get(dp.zone) || [];
+      list.push(dp);
+      byZone.set(dp.zone, list);
+    }
+
+    // Find max carbon value for scaling
+    const maxCarbon = Math.max(...dataPoints.map((dp) => dp.carbonGrams), 1);
+
+    return (
+      <div className={styles.container}>
+        <div className={styles.grid}>
+          {Array.from(byZone.entries()).map(([zone, points]) => {
+            const totalCarbon = points.reduce((sum, dp) => sum + dp.carbonGrams, 0);
+            const totalEnergy = points.reduce((sum, dp) => sum + dp.energyKwh, 0);
+
+            return (
+              <div className={styles.card} key={zone}>
+                <div className={styles.cardHeader}>
+                  <span className={styles.zoneLabel}>{zone}</span>
+                  <span className={styles.sourceBadge}>
+                    {formatCarbonValue(totalCarbon, options.carbonUnit)}
+                  </span>
+                </div>
+
+                {/* Timeline bar chart */}
+                <div style={{ display: 'flex', alignItems: 'flex-end', gap: '2px', height: '60px', marginBottom: '8px' }}>
+                  {points.slice(-24).map((dp, idx) => {
+                    const height = Math.max(4, (dp.carbonGrams / maxCarbon) * 100);
+                    const color = getCarbonColor(dp.carbonGrams, options.sustainabilityTarget);
+                    return (
+                      <div
+                        key={idx}
+                        title={`${new Date(dp.timestamp).toLocaleTimeString()}: ${formatCarbonValue(dp.carbonGrams, options.carbonUnit)}`}
+                        style={{
+                          flex: 1,
+                          height: `${height}%`,
+                          background: color,
+                          borderRadius: '2px 2px 0 0',
+                          minHeight: '4px',
+                          opacity: 0.8,
+                        }}
+                      />
+                    );
+                  })}
+                </div>
+
+                <div className={styles.metricRow}>
+                  <span className={styles.metricLabel}>Energy</span>
+                  <span className={styles.metricValue}>{totalEnergy.toFixed(2)} kWh</span>
+                </div>
+
+                {options.showCost && (
+                  <div className={styles.metricRow}>
+                    <span className={styles.metricLabel}>Cost</span>
+                    <span className={styles.metricValue}>${(totalEnergy * options.energyPricePerKwh).toFixed(2)}</span>
+                  </div>
+                )}
+              </div>
+            );
+          })}
         </div>
       </div>
     );

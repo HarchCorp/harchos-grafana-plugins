@@ -41,6 +41,11 @@ export class HarchOSDataSource extends DataSourceApi<HarchOSQuery, HarchOSDataSo
       'Content-Type': 'application/json',
     };
 
+    // Add API key from secure JSON data as Authorization header
+    if (this.instanceSettings.secureJsonData?.apiKey) {
+      headers['Authorization'] = `Bearer ${this.instanceSettings.secureJsonData.apiKey}`;
+    }
+
     // Merge custom headers from JSON data
     if (this.jsonData.customHeaders) {
       for (const [key, value] of Object.entries(this.jsonData.customHeaders)) {
